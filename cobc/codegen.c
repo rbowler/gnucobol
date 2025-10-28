@@ -657,6 +657,31 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		output ("NULL");
 		return;
 	}
+#ifndef COBC_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		output ("/*");
+		for (i = 0; i < size; i++) {
+			if (i + 1 < size &&
+			    ((s[i] == '*' && s[i + 1] == '/') ||
+			     (s[i] == '/' && s[i + 1] == '*'))) {
+				output ("--");
+				i++;
+				continue;
+			}
+			c = s[i];
+			if (!isprint(c)) c = '_';
+			output ("%c", c);
+		}
+		output ("*/");
+		output ("\"");
+		for (i = 0; i < size; i++) {
+			c = s[i];
+			output ("\\x%02X", ascii_to_ebcdic[c]);
+		}
+		output ("\"");
+		return;
+	}
+#endif
 	output ("\"");
 	for (i = 0; i < size; i++) {
 		c = s[i];
