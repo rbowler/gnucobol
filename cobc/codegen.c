@@ -658,7 +658,7 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		return;
 	}
 #ifndef COBC_EBCDIC_MACHINE
-	if (cb_ebcdic_data) {
+	if (cb_ebcdic_data && llit != 'N') {
 		output ("/*");
 		for (i = 0; i < size; i++) {
 			if (i + 1 < size &&

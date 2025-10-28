@@ -762,7 +762,7 @@ struct cb_literal {
 	unsigned char		*data;	/* Literal data */
 	cob_u32_t		size;	/* Literal size */
 	int			scale;	/* Numeric scale */
-	cob_u32_t		llit;	/* 'L' literal */
+	cob_u32_t		llit;	/* 'L' literal, 'N' for native alphanumeric */
 	short			sign;	/* unsigned: 0 negative: -1 positive: 1 */
 	short			all;	/* ALL */
 };
@@ -2099,6 +2099,8 @@ extern cb_tree			cb_build_numeric_literal (int,
 							  const void *,
 							  const int);
 extern cb_tree			cb_build_alphanumeric_literal (const void *,
+							       const size_t);
+extern cb_tree			cb_build_native_alphanumeric_literal (const void *,
 							       const size_t);
 extern cb_tree			cb_build_national_literal (const void *,
 							       const size_t);

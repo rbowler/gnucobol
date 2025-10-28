@@ -2164,7 +2164,7 @@ build_external_assignment_name (cb_tree name)
 	}
 
 	/* Convert the EXTERNAL name into literal */
-	return cb_build_alphanumeric_literal (name_ptr, strlen (name_ptr));
+	return cb_build_native_alphanumeric_literal (name_ptr, strlen (name_ptr));
 }
 
 /* build name for ASSIGN, to be resolved later as we don't have any
