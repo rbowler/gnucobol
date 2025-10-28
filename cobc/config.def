@@ -150,6 +150,9 @@ CB_CONFIG_BOOLEAN (cb_perform_osvs, "perform-osvs",
 CB_CONFIG_BOOLEAN (cb_arithmetic_osvs, "arithmetic-osvs",
 	_("limit precision in intermediate results to precision of final result (less accurate)"))
 
+CB_CONFIG_BOOLEAN (cb_ebcdic_data, "ebcdic-data",
+	_("program processes data in EBCDIC instead of native code page"))
+
 CB_CONFIG_BOOLEAN (cb_constant_folding, "constant-folding",
 	_("evaluate constant expressions at compile time"))
 
