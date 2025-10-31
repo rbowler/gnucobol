@@ -265,10 +265,10 @@ int			cb_depend_target_auto = 0;
 int			cb_flag_copybook_deps = 0;
 #endif
 /* Run-time values of figurative constants */
-char			cb_rt_space;
-char			cb_rt_zero;
-char			cb_rt_quote;
-char			cb_rt_apost;
+unsigned char		cb_rt_space;
+unsigned char		cb_rt_zero;
+unsigned char		cb_rt_quote;
+unsigned char		cb_rt_apost;
 
 /* set by option -fttitle=<title> */
 char                    *cb_listing_with_title = NULL;
