@@ -507,6 +507,12 @@ extern int			current_call_convention;
 
 extern const char		*cb_ebcdic_table;
 
+/* Run-time values of figurative constants */
+extern char			cb_rt_space;
+extern char			cb_rt_zero;
+extern char			cb_rt_quote;
+extern char			cb_rt_apost;
+
 /* Functions */
 
 /* cobc.c */

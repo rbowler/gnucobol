@@ -264,6 +264,11 @@ int			cb_depend_target_auto = 0;
 #ifdef EXPERIMENTAL_COPYBOOK_DEPS_OPTION
 int			cb_flag_copybook_deps = 0;
 #endif
+/* Run-time values of figurative constants */
+char			cb_rt_space;
+char			cb_rt_zero;
+char			cb_rt_quote;
+char			cb_rt_apost;
 
 /* set by option -fttitle=<title> */
 char                    *cb_listing_with_title = NULL;
@@ -9601,6 +9606,17 @@ main (int argc, char **argv)
 	cobc_init_typeck ();
 	cobc_init_codegen ();
 	cobc_init_tree ();
+#endif
+
+#ifndef COBC_EBCDIC_MACHINE
+	/* Reset run-time values of figurative constants
+	   if using EBCDIC data on a non-EBCDIC machine */
+	if (cb_ebcdic_data) {
+		cb_rt_space = 0x40;
+		cb_rt_zero = 0xF0;
+		cb_rt_quote = 0x7F;
+		cb_rt_apost = 0x7D;
+	}
 #endif
 
 	/* Process input files */

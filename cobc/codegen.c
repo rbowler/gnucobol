@@ -5082,7 +5082,7 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 	/* figurative constants */
 	if (CB_CONST_P (value)) {
 		if (value == cb_space) {
-			output_figurative (x, f, ' ', init_occurs);
+			output_figurative (x, f, cb_rt_space, init_occurs);
 			return;
 		} else if (value == cb_low) {
 			output_figurative (x, f, current_prog->low_value, init_occurs);
@@ -5092,14 +5092,14 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 			return;
 		} else if (value == cb_quote) {
 			if (cb_flag_apostrophe) {
-				output_figurative (x, f, '\'', init_occurs);
+				output_figurative (x, f, cb_rt_apost, init_occurs);
 			} else {
-				output_figurative (x, f, '"', init_occurs);
+				output_figurative (x, f, cb_rt_quote, init_occurs);
 			}
 			return;
 		} else if (value == cb_zero && f->usage == CB_USAGE_DISPLAY) {
 			if (!f->flag_sign_separate && !f->flag_blank_zero) {
-				output_figurative (x, f, '0', init_occurs);
+				output_figurative (x, f, cb_rt_zero, init_occurs);
 			} else {
 				output_move (cb_zero, x);	/* CHECKME: what about init_occurs ?*/
 			}
