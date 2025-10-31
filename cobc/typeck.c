@@ -12044,7 +12044,7 @@ size_overflow_2:
 static cb_tree
 cb_build_memset (cb_tree x, const int c)
 {
-	cb_tree source = cb_int (c);
+	cb_tree source = cb_int_hex (c);
 	if (cb_field_size (x) == 1) {
 		return CB_BUILD_FUNCALL_2 ("$E", x, source);
 	}

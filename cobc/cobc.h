@@ -73,6 +73,8 @@
 #define COB_A_PURE
 #endif
 
+#define USE_INT_HEX 1
+
 /* Defines for access() */
 #ifndef	F_OK
 #define	F_OK		0
