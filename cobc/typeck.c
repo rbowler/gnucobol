@@ -12156,7 +12156,7 @@ cb_build_move_space (cb_tree x)
 	case CB_CATEGORY_ALPHABETIC:
 	case CB_CATEGORY_ALPHANUMERIC:
 		if (!CB_FIELD_PTR (x)->flag_any_length) {
-			return cb_build_memset (x, ' ');
+			return cb_build_memset (x, cb_rt_space);
 		}
 		/* Fall through */
 	default:
@@ -12179,7 +12179,7 @@ cb_build_move_zero (cb_tree x)
 	case CB_CATEGORY_ALPHABETIC:
 	case CB_CATEGORY_ALPHANUMERIC:
 		if (!CB_FIELD_PTR (x)->flag_any_length) {
-			return cb_build_memset (x, '0');
+			return cb_build_memset (x, cb_rt_zero);
 		}
 		/* Fall through */
 	default:
@@ -12233,7 +12233,7 @@ cb_build_move_quote (cb_tree x)
 	case CB_CATEGORY_ALPHABETIC:
 	case CB_CATEGORY_ALPHANUMERIC:
 		if (!CB_FIELD_PTR (x)->flag_any_length) {
-			return cb_build_memset (x, cb_flag_apostrophe ? '\'' : '"');
+			return cb_build_memset (x, cb_flag_apostrophe ? cb_rt_apost : cb_rt_quote);
 		}
 		/* Fall through */
 	default:

@@ -5254,7 +5254,7 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 			if (padstart) {
 				output (" + %u", padstart);
 			}
-			output (", ' ', %u);", padlen);
+			output (", cb_rt_space, %u);", padlen);
 			output_newline ();
 		}	
 #else /* GEN_SINGLE_MEMCPY follows */
