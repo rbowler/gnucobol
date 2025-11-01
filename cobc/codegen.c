@@ -686,11 +686,10 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 	for (i = 0; i < size; i++) {
 		c = s[i];
 		if (!isprint (c)) {
-#if 1	/* octal */
+#if 0	/* octal */
 			output ("\\%03o", c);
-#else	/* hex (can be useful for a small amount of non-printable characters,
-		   but gets really uggly if the string has a lot of those */
-			output ("\" \"\\x%X\" \"", c);
+#else
+			output ("\\x%X", c);
 #endif
 		} else if (c == '\"') {
 			output ("\\%c", c);
@@ -2875,7 +2874,7 @@ output_integer (cb_tree x)
 #ifdef USE_INT_HEX /* Simon: using this increases the struct and we
 		 *should* pass the flags as constants in any case... */
 		if (CB_INTEGER (x)->hexval) {
-			output ("0x%X", CB_INTEGER (x)->val);
+			output ("0x%02X", CB_INTEGER (x)->val);
 		} else {
 			output ("%d", CB_INTEGER (x)->val);
 		}
@@ -4256,7 +4255,7 @@ output_char (const char *lead, const unsigned char c, const char *trail)
 		output ("%03o", c);
 #else	/* hex */
 		/* output ("(unsigned char)'\\x%X'", c); */
-		output ("0x%X", c);
+		output ("0x%02X", c);
 #endif
 	} else if (c == '\'' || c == '\\') {
 		output ("(unsigned char)'\\%c'", c);
