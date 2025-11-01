@@ -12385,11 +12385,11 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (l->size == 1) {
 			bbyte = l->data[0];
-#ifndef	COB_EBCDIC_MACHINE
+			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
-#endif
+			#endif
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
@@ -12404,11 +12404,11 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (i == (int)l->size) {
 			bbyte = l->data[0];
-#ifndef	COB_EBCDIC_MACHINE
+			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
-#endif
+			#endif
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),

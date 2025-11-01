@@ -9608,7 +9608,7 @@ main (int argc, char **argv)
 	cobc_init_tree ();
 #endif
 
-#ifndef COBC_EBCDIC_MACHINE
+#ifndef	COB_EBCDIC_MACHINE
 	/* Reset run-time values of figurative constants
 	   if using EBCDIC data on a non-EBCDIC machine */
 	if (cb_ebcdic_data) {
