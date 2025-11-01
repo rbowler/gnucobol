@@ -11220,7 +11220,7 @@ validate_move (cb_tree src, cb_tree dst, const unsigned int is_value, int *move_
 			/* Compute the most significant figure place
 			   in relatation to the decimal point (negative = decimal position) */
 			for (leftmost_significant = 0; leftmost_significant < l->size; leftmost_significant++) {
-				if (l->data[leftmost_significant] != '0') {
+				if (l->data[leftmost_significant] != cb_rt_zero) {
 					break;
 				}
 			}
@@ -11234,7 +11234,7 @@ validate_move (cb_tree src, cb_tree dst, const unsigned int is_value, int *move_
 				/* Compute the least significant figure place
 				   in relatation to the decimal point (negative = decimal position) */
 				for (i = l->size - 1; i != 0; i--) {
-					if (l->data[i] != '0') {
+					if (l->data[i] != cb_rt_zero) {
 						break;
 					}
 				}
@@ -12132,10 +12132,10 @@ cb_build_move_num_zero (cb_tree x)
 		return cb_build_memset (x, 0);
 	case CB_USAGE_DISPLAY:
 		if (!cb_ebcdic_sign) {
-			return cb_build_memset (x, '0');
+			return cb_build_memset (x, cb_rt_zero);
 		}
 		if (f->pic && !f->pic->have_sign) {
-			return cb_build_memset (x, '0');
+			return cb_build_memset (x, cb_rt_zero);
 		}
 		break;
 	case CB_USAGE_PACKED:
@@ -12446,13 +12446,13 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			if (diff <= 0) {
 				memcpy (buff, l->data - diff, (size_t)f->size);
 			} else {
-				memset (buff, '0', (size_t)diff);
+				memset (buff, cb_rt_zero, (size_t)diff);
 				memcpy (buff + diff, l->data, (size_t)l->size);
 			}
 			/* Check all zeros */
 			n = 0;
 			for (p = buff; p < buff + f->size; p++) {
-				if (*p != '0') {
+				if (*p != cb_rt_zero) {
 					n = 1;
 					break;
 				}
@@ -12496,7 +12496,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				if (diff <= 0) {
 					memcpy (buff, l->data - diff, (size_t)f->size);
 				} else {
-					memset (buff, ' ', (size_t)diff);
+					memset (buff, cb_rt_space, (size_t)diff);
 					memcpy (buff + diff, l->data, (size_t)l->size);
 				}
 			} else {
@@ -12504,14 +12504,19 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 					memcpy (buff, l->data, (size_t)f->size);
 				} else {
 					memcpy (buff, l->data, (size_t)l->size);
-					memset (buff + l->size, ' ', (size_t)diff);
+					memset (buff + l->size, cb_rt_space, (size_t)diff);
 				}
 			}
 		}
 		bbyte = *buff;
 		if (f->size == 1) {
 			cobc_parse_free (buff);
-			return CB_BUILD_FUNCALL_2 ("$E", dst, cb_int (bbyte));
+			#ifndef	COB_EBCDIC_MACHINE
+			if (cb_ebcdic_data) {
+				bbyte = ascii_to_ebcdic[bbyte];
+			}
+			#endif
+			return CB_BUILD_FUNCALL_2 ("$E", dst, cb_int_hex (bbyte));
 		}
 		for (i = 0; i < f->size; i++) {
 			if (bbyte != buff[i]) {
@@ -12520,6 +12525,11 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (i == f->size) {
 			cobc_parse_free (buff);
+			#ifndef	COB_EBCDIC_MACHINE
+			if (cb_ebcdic_data) {
+				bbyte = ascii_to_ebcdic[bbyte];
+			}
+			#endif
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
@@ -12602,7 +12612,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		if (l->sign == 0
 		 || !f->pic->have_sign) {
 			for (i = 0; i < l->size; i++) {
-				if (l->data[i] != '0') {
+				if (l->data[i] != cb_rt_zero) {
 					break;
 				}
 			}

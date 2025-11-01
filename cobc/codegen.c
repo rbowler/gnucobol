@@ -4257,6 +4257,10 @@ output_char (const char *lead, const unsigned char c, const char *trail)
 		/* output ("(unsigned char)'\\x%X'", c); */
 		output ("0x%02X", c);
 #endif
+#ifndef	COB_EBCDIC_MACHINE
+	} else if (cb_ebcdic_data) {
+		output ("(unsigned char)0x%02X", ascii_to_ebcdic[c]);
+#endif
 	} else if (c == '\'' || c == '\\') {
 		output ("(unsigned char)'\\%c'", c);
 	} else {
@@ -4794,9 +4798,9 @@ initialize_uniform_char (const struct cb_field *f,
 		case COB_TYPE_NUMERIC_BINARY:
 			return 0;
 		case COB_TYPE_NUMERIC_DISPLAY:
-			return '0';
+			return cb_rt_zero;
 		case COB_TYPE_ALPHANUMERIC:
-			return ' ';
+			return cb_rt_space;
 		default:
 			return -1;
 		}
@@ -5227,7 +5231,7 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 			   from a string - we use a local buffer to set that up */
 			unsigned char litbuff[128];
 			memcpy (litbuff + litstart, l->data, l->size);
-			memset (litbuff + padstart, ' ', padlen);
+			memset (litbuff + padstart, cb_rt_space, padlen);
 			output_prefix ();
 			output ("memcpy (");
 			output_data (x);
@@ -5269,7 +5273,7 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 		}
 
 		memcpy (litbuff + litstart, l->data, l->size);
-		memset (litbuff + padstart, ' ', padlen);
+		memset (litbuff + padstart, cb_rt_space, padlen);
 
 		buffchar = *(litbuff + size - 1);
 		n = 0;
@@ -5687,7 +5691,7 @@ output_initialize_compound (struct cb_initialize *p, cb_tree x)
 						case CB_USAGE_DISPLAY:
 							if (!cb_ebcdic_sign
 							 && !f->pic->have_sign) {
-								init = '0';
+								init = cb_rt_zero;
 							}
 							break;
 						case CB_USAGE_COMP_6:
@@ -5701,7 +5705,7 @@ output_initialize_compound (struct cb_initialize *p, cb_tree x)
 							break;
 						};
 					} else {
-						init = ' ';
+						init = cb_rt_space;
 					}
 					if (init != -1) {
 						cb_tree stmt = CB_BUILD_FUNCALL_3 ("memset",
@@ -7860,7 +7864,7 @@ output_debug_item (const struct cb_debug *dbg)
 			output_prefix ();
 			output ("memset (");
 			output_data (dbg->target);
-			output (", ' ', %u);", (unsigned int)size);
+			output (", cb_rt_space, %u);", (unsigned int)size);
 			output_newline ();
 			output_prefix ();
 			output ("if (");
@@ -7895,7 +7899,7 @@ output_debug_item (const struct cb_debug *dbg)
 				output_prefix ();
 				output ("memset (");
 				output_data (dbg->target);
-				output (" + %u, ' ', %u);",
+				output (" + %u, cb_rt_space, %u);",
 					(unsigned int)dbg->size, (unsigned int)(size - dbg->size));
 				output_newline ();
 			}
@@ -7916,7 +7920,7 @@ output_debug_item (const struct cb_debug *dbg)
 		output_prefix ();
 		output ("memset (");
 		output_data (dbg->target);
-		output (" + %u, ' ', %u);",
+		output (" + %u, cb_rt_space, %u);",
 			(unsigned int)dbg->size, (unsigned int)(size - dbg->size));
 		output_newline ();
 	}
