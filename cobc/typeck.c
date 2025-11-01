@@ -12385,7 +12385,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (l->size == 1) {
 			bbyte = l->data[0];
-#ifndef	COBC_EBCDIC_MACHINE
+#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
@@ -12404,7 +12404,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (i == (int)l->size) {
 			bbyte = l->data[0];
-#ifndef	COBC_EBCDIC_MACHINE
+#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
 				bbyte = ascii_to_ebcdic[bbyte];
 			}

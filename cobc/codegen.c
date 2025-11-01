@@ -657,7 +657,7 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		output ("NULL");
 		return;
 	}
-#ifndef COBC_EBCDIC_MACHINE
+#ifndef	COB_EBCDIC_MACHINE
 	if (cb_ebcdic_data && llit != 'N') {
 		output ("/*");
 		for (i = 0; i < size; i++) {
