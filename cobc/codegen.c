@@ -662,13 +662,13 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		output ("/*");
 		for (i = 0; i < size; i++) {
 			if (i + 1 < size &&
-			    ((s[i] == '*' && s[i + 1] == '/') ||
-			     (s[i] == '/' && s[i + 1] == '*'))) {
+			    ((s[i] == 0x5C && s[i + 1] == 0x61) ||
+			     (s[i] == 0x61 && s[i + 1] == 0x5C))) {
 				output ("--");
 				i++;
 				continue;
 			}
-			c = s[i];
+			c = ebcdic_to_ascii[s[i]];
 			if (!isprint(c)) c = '_';
 			output ("%c", c);
 		}
@@ -676,7 +676,7 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		output ("\"");
 		for (i = 0; i < size; i++) {
 			c = s[i];
-			output ("\\x%02X", ascii_to_ebcdic[c]);
+			output ("\\x%02X", c);
 		}
 		output ("\"");
 		return;

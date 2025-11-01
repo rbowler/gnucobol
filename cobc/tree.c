@@ -2784,8 +2784,17 @@ cb_tree
 cb_build_alphanumeric_literal (const void *data, const size_t size)
 {
 	cb_tree			l;
+	cob_u32_t		i;
 
 	l = CB_TREE (build_literal (CB_CATEGORY_ALPHANUMERIC, data, size));
+
+#ifndef	COB_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		for (i = 0; i < CB_LITERAL(l)->size; i++) {
+			CB_LITERAL(l)->data[i] = ascii_to_ebcdic[CB_LITERAL(l)->data[i]];
+		}
+	}
+#endif
 
 	l->source_file = cb_source_file;
 	l->source_line = cb_source_line;

@@ -1722,7 +1722,7 @@ scan_x (const char *text, const char *type)
 		}
 		/* TODO: for type U needs additional checks */
 		if (type[0] != 'N') {
-			yylval = cb_build_alphanumeric_literal (plex_buff, (size_t)(dst - plex_buff));
+			yylval = cb_build_native_alphanumeric_literal (plex_buff, (size_t)(dst - plex_buff));
 		} else {
 			yylval = cb_build_national_literal (plex_buff, (size_t)(dst - plex_buff));
 		}
