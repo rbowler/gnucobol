@@ -12384,9 +12384,15 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			return CB_BUILD_FUNCALL_2 ("cob_move", src, dst);
 		}
 		if (l->size == 1) {
+			bbyte = l->data[0];
+#ifndef	COBC_EBCDIC_MACHINE
+			if (cb_ebcdic_data) {
+				bbyte = ascii_to_ebcdic[bbyte];
+			}
+#endif
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
-					   cb_int (l->data[0]),
+					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
 		bbyte = l->data[0];
@@ -12397,9 +12403,15 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			bbyte = l->data[i];
 		}
 		if (i == (int)l->size) {
+			bbyte = l->data[0];
+#ifndef	COBC_EBCDIC_MACHINE
+			if (cb_ebcdic_data) {
+				bbyte = ascii_to_ebcdic[bbyte];
+			}
+#endif
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
-					   cb_int (l->data[0]),
+					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
 		if (f->size > 128) {
@@ -12476,7 +12488,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				cobc_parse_free (buff);
 				return CB_BUILD_FUNCALL_3 ("memset",
 						   CB_BUILD_CAST_ADDRESS (dst),
-						   cb_int (' '),
+						   cb_int_hex (cb_rt_space),
 						   CB_BUILD_CAST_LENGTH (dst));
 			}
 		} else {
@@ -12510,7 +12522,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			cobc_parse_free (buff);
 			return CB_BUILD_FUNCALL_3 ("memset",
 					   CB_BUILD_CAST_ADDRESS (dst),
-					   cb_int (bbyte),
+					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
 		return CB_BUILD_FUNCALL_3 ("memcpy",
