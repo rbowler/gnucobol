@@ -12384,15 +12384,9 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			return CB_BUILD_FUNCALL_2 ("cob_move", src, dst);
 		}
 		if (l->size == 1) {
-			bbyte = l->data[0];
-			#ifndef	COB_EBCDIC_MACHINE
-			if (cb_ebcdic_data) {
-//				bbyte = ascii_to_ebcdic[bbyte];
-			}
-			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12393*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
-					   cb_int_hex (bbyte),
+					   cb_int_hex (l->data[0]),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
 		bbyte = l->data[0];
@@ -12403,15 +12397,9 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			bbyte = l->data[i];
 		}
 		if (i == (int)l->size) {
-			bbyte = l->data[0];
-			#ifndef	COB_EBCDIC_MACHINE
-			if (cb_ebcdic_data) {
-//				bbyte = ascii_to_ebcdic[bbyte];
-			}
-			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12412*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
-					   cb_int_hex (bbyte),
+					   cb_int_hex (l->data[0]),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
 		if (f->size > 128) {
@@ -12511,11 +12499,6 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		bbyte = *buff;
 		if (f->size == 1) {
 			cobc_parse_free (buff);
-			#ifndef	COB_EBCDIC_MACHINE
-			if (cb_ebcdic_data) {
-//				bbyte = ascii_to_ebcdic[bbyte];
-			}
-			#endif
 			return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12519*/", dst, cb_int_hex (bbyte));
 		}
 		for (i = 0; i < f->size; i++) {
@@ -12525,11 +12508,6 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (i == f->size) {
 			cobc_parse_free (buff);
-			#ifndef	COB_EBCDIC_MACHINE
-			if (cb_ebcdic_data) {
-//				bbyte = ascii_to_ebcdic[bbyte];
-			}
-			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12534*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
