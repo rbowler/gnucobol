@@ -1281,7 +1281,7 @@ cb_check_field_debug (cb_tree fld)
 		case 0:
 			current_statement->debug_check =
 				cb_list_add (current_statement->debug_check,
-					     CB_BUILD_FUNCALL_3 ("memset",
+					     CB_BUILD_FUNCALL_3 ("memset/*typeck.c:1284*/",
 						CB_BUILD_CAST_ADDRESS (cb_debug_sub_1),
 						cb_int (' '),
 						CB_BUILD_CAST_LENGTH (cb_debug_sub_1)));
@@ -1289,7 +1289,7 @@ cb_check_field_debug (cb_tree fld)
 		case 1:
 			current_statement->debug_check =
 				cb_list_add (current_statement->debug_check,
-					     CB_BUILD_FUNCALL_3 ("memset",
+					     CB_BUILD_FUNCALL_3 ("memset/*typeck.c:1295*/",
 						CB_BUILD_CAST_ADDRESS (cb_debug_sub_2),
 						cb_int (' '),
 						CB_BUILD_CAST_LENGTH (cb_debug_sub_2)));
@@ -1297,7 +1297,7 @@ cb_check_field_debug (cb_tree fld)
 		case 2:
 			current_statement->debug_check =
 				cb_list_add (current_statement->debug_check,
-					     CB_BUILD_FUNCALL_3 ("memset",
+					     CB_BUILD_FUNCALL_3 ("memset/*typeck.c:1306*/",
 						CB_BUILD_CAST_ADDRESS (cb_debug_sub_3),
 						cb_int (' '),
 						CB_BUILD_CAST_LENGTH (cb_debug_sub_3)));
@@ -7171,10 +7171,10 @@ cb_build_cond_fields (struct cb_binary_op *p,
 	 && size1 == 1
 	 && (right == cb_space || right == cb_zero
 	  || right == cb_high  || right == cb_low)) {
-		return CB_BUILD_FUNCALL_2 ("$G", left, right);
+		return CB_BUILD_FUNCALL_2 ("$G/*typeck.c:7174*/", left, right);
 	}
 	if (size1 == 1 && size2 == 1) {
-		return CB_BUILD_FUNCALL_2 ("$G", left, right);
+		return CB_BUILD_FUNCALL_2 ("$G/*typeck.c:7177*/", left, right);
 	}
 	if (size1 > 0 && size1 == size2) {
 		return CB_BUILD_FUNCALL_3 ("memcmp",
@@ -12046,9 +12046,9 @@ cb_build_memset (cb_tree x, const int c)
 {
 	cb_tree source = cb_int_hex (c);
 	if (cb_field_size (x) == 1) {
-		return CB_BUILD_FUNCALL_2 ("$E", x, source);
+		return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12049*/", x, source);
 	}
-	return CB_BUILD_FUNCALL_3 ("memset",
+	return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12051*/",
 				   CB_BUILD_CAST_ADDRESS (x),
 				   source, CB_BUILD_CAST_LENGTH (x));
 }
@@ -12060,7 +12060,7 @@ cb_build_move_copy (cb_tree src, cb_tree dst)
 
 	size = cb_field_size (dst);
 	if (size == 1) {
-		return CB_BUILD_FUNCALL_2 ("$F", dst, src);
+		return CB_BUILD_FUNCALL_2 ("$F/*typeck.c:12063*/", dst, src);
 	}
 	if (cb_move_ibm) {
 		overlapping = 0;
@@ -12390,7 +12390,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
-			return CB_BUILD_FUNCALL_3 ("memset",
+			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12393*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
@@ -12409,7 +12409,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
-			return CB_BUILD_FUNCALL_3 ("memset",
+			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12412*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
@@ -12421,7 +12421,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		for (i = 0; i < f->size; i++) {
 			buff[i] = l->data[i % l->size];
 		}
-		return CB_BUILD_FUNCALL_3 ("memcpy",
+		return CB_BUILD_FUNCALL_3 ("memcpy/*typeck.c:12424*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_build_string (buff, (size_t)f->size),
 					   CB_BUILD_CAST_LENGTH (dst));
@@ -12486,7 +12486,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			}
 			if (f->flag_blank_zero && !n) {
 				cobc_parse_free (buff);
-				return CB_BUILD_FUNCALL_3 ("memset",
+				return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12489*/",
 						   CB_BUILD_CAST_ADDRESS (dst),
 						   cb_int_hex (cb_rt_space),
 						   CB_BUILD_CAST_LENGTH (dst));
@@ -12516,7 +12516,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
-			return CB_BUILD_FUNCALL_2 ("$E", dst, cb_int_hex (bbyte));
+			return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12519*/", dst, cb_int_hex (bbyte));
 		}
 		for (i = 0; i < f->size; i++) {
 			if (bbyte != buff[i]) {
@@ -12530,12 +12530,12 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
-			return CB_BUILD_FUNCALL_3 ("memset",
+			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12534*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
-		return CB_BUILD_FUNCALL_3 ("memcpy",
+		return CB_BUILD_FUNCALL_3 ("memcpy/*typeck.c:12536*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_build_string (buff, (size_t)f->size),
 					   CB_BUILD_CAST_LENGTH (dst));
