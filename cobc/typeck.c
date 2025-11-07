@@ -12387,7 +12387,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			bbyte = l->data[0];
 			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
-				bbyte = ascii_to_ebcdic[bbyte];
+//				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12393*/",
@@ -12406,7 +12406,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			bbyte = l->data[0];
 			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
-				bbyte = ascii_to_ebcdic[bbyte];
+//				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12412*/",
@@ -12513,7 +12513,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			cobc_parse_free (buff);
 			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
-				bbyte = ascii_to_ebcdic[bbyte];
+//				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
 			return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12519*/", dst, cb_int_hex (bbyte));
@@ -12527,7 +12527,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 			cobc_parse_free (buff);
 			#ifndef	COB_EBCDIC_MACHINE
 			if (cb_ebcdic_data) {
-				bbyte = ascii_to_ebcdic[bbyte];
+//				bbyte = ascii_to_ebcdic[bbyte];
 			}
 			#endif
 			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12534*/",
