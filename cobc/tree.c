@@ -1852,7 +1852,7 @@ cb_get_int (const cb_tree x)
 
 	/* Skip leading zeroes */
 	for (i = 0; i < l->size; i++) {
-		if (l->data[i] != '0') {
+		if (l->data[i] != cb_rt_zero) {
 			break;
 		}
 	}
@@ -1895,7 +1895,7 @@ cb_get_int (const cb_tree x)
 
 	val = 0;
 	for (; i < l->size; i++) {
-		val = val * 10 + l->data[i] - '0';
+		val = val * 10 + l->data[i] - cb_rt_zero;
 	}
 	if (val && l->sign < 0) {
 		val = -val;
