@@ -662,8 +662,8 @@ output_string (const unsigned char *s, const int size, const cob_u32_t llit)
 		output ("/*");
 		for (i = 0; i < size; i++) {
 			if (i + 1 < size &&
-			    ((s[i] == 0x5C && s[i + 1] == 0x61) ||
-			     (s[i] == 0x61 && s[i + 1] == 0x5C))) {
+			    ((s[i] == cb_rt_slash && s[i + 1] == cb_rt_aster) ||
+			     (s[i] == cb_rt_aster && s[i + 1] == cb_rt_slash))) {
 				output ("--");
 				i++;
 				continue;

@@ -509,11 +509,16 @@ extern int			current_call_convention;
 
 extern const char		*cb_ebcdic_table;
 
-/* Run-time values of figurative constants */
+/* Run-time values of special characters */
 extern unsigned char		cb_rt_space;
-extern unsigned char		cb_rt_zero;
+extern unsigned char		cb_rt_plus;
+extern unsigned char		cb_rt_minus;
+extern unsigned char		cb_rt_aster;
+extern unsigned char		cb_rt_slash;
 extern unsigned char		cb_rt_quote;
 extern unsigned char		cb_rt_apost;
+extern unsigned char		cb_rt_zero;
+extern unsigned char		cb_rt_nine;
 
 /* Functions */
 

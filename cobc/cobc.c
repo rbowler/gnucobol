@@ -264,11 +264,17 @@ int			cb_depend_target_auto = 0;
 #ifdef EXPERIMENTAL_COPYBOOK_DEPS_OPTION
 int			cb_flag_copybook_deps = 0;
 #endif
-/* Run-time values of figurative constants */
-unsigned char		cb_rt_space;
-unsigned char		cb_rt_zero;
-unsigned char		cb_rt_quote;
-unsigned char		cb_rt_apost;
+
+/* Run-time values of special characters */
+unsigned char		cb_rt_space = ' ';
+unsigned char		cb_rt_plus = '+';
+unsigned char		cb_rt_minus = '-';
+unsigned char		cb_rt_aster = '*';
+unsigned char		cb_rt_slash = '/';
+unsigned char		cb_rt_quote = '"';
+unsigned char		cb_rt_apost = '\'';
+unsigned char		cb_rt_zero = '0';
+unsigned char		cb_rt_nine = '9';
 
 /* set by option -fttitle=<title> */
 char                    *cb_listing_with_title = NULL;
@@ -9609,13 +9615,18 @@ main (int argc, char **argv)
 #endif
 
 #ifndef	COB_EBCDIC_MACHINE
-	/* Reset run-time values of figurative constants
+	/* Reset run-time values of special characters
 	   if using EBCDIC data on a non-EBCDIC machine */
 	if (cb_ebcdic_data) {
 		cb_rt_space = 0x40;
-		cb_rt_zero = 0xF0;
+		cb_rt_plus = 0x4E;
+		cb_rt_minus = 0x60;
+		cb_rt_aster = 0x5C;
+		cb_rt_slash = 0x61;
 		cb_rt_quote = 0x7F;
 		cb_rt_apost = 0x7D;
+		cb_rt_zero = 0xF0;
+		cb_rt_nine = 0xF9;
 	}
 #endif
 
