@@ -4842,20 +4842,20 @@ output_figurative (cb_tree x, const struct cb_field *f, const int value,
 	if (init_occurs) {
 		output ("memset/*codegen.c:4843*/ (");
 		output_data (x);
-		output (", %d, %d);", value, f->size * f->occurs_max);
+		output (", 0x%2.2X, %d);", value, f->size * f->occurs_max);
 	} else if (f->size == 1) {
 		output ("*(cob_u8_ptr)/*codegen.c:4847*/(");
 		output_data (x);
-		output (") = %d;", value);
+		output (") = 0x%2.2X;", value);
 	} else {
 		output ("memset/*codegen.c:4851*/ (");
 		output_data (x);
 		if (CB_REFERENCE_P(x) && CB_REFERENCE(x)->length) {
-			output (", %d, ", value);
+			output (", 0x%2.2X, ", value);
 			output_size (x);
 			output (");");
 		} else {
-			output (", %d, %d);", value, f->size);
+			output (", 0x%2.2X, %d);", value, f->size);
 		}
 	}
 	output_newline ();
