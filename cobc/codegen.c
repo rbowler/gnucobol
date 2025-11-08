@@ -1173,9 +1173,28 @@ is_index_1 (cb_tree x)
 static void
 output_data (cb_tree x)
 {
+	cob_u32_t	i;
+
 	switch (CB_TREE_TAG (x)) {
 	case CB_TAG_LITERAL: {
 		struct cb_literal	*l = CB_LITERAL (x);
+#ifndef	COB_EBCDIC_MACHINE
+		if (cb_ebcdic_data && CB_TREE_CATEGORY (x) == CB_CATEGORY_NUMERIC) {
+			output ("(cob_u8_ptr)/*%s%s*/\"",
+					(l->sign < 0) ? "-" : (l->sign > 0) ? "+" : "",
+					(char *)l->data);
+			if (l->sign < 0) {
+				output ("\\x%2.2X", cb_rt_minus);
+			} else if (l->sign > 0) {
+				output ("\\x%2.2X", cb_rt_plus);
+			}
+			for (i = 0; i < l->size; i++) {
+				output ("\\x%2.2X", ascii_to_ebcdic[l->data[i]]);
+			}
+			output ("\"");
+			break;
+		}
+#endif
 		if (CB_TREE_CLASS (x) == CB_CLASS_NUMERIC) {
 			output ("(cob_u8_ptr)\"%s%s\"",
 					(l->sign < 0) ? "-" : (l->sign > 0) ? "+" : "",
