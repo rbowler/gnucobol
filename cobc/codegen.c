@@ -4840,15 +4840,15 @@ output_figurative (cb_tree x, const struct cb_field *f, const int value,
 	output_prefix ();
 	/* Check for non-standard 01 OCCURS */
 	if (init_occurs) {
-		output ("memset (");
+		output ("memset/*codegen.c:4843*/ (");
 		output_data (x);
 		output (", %d, %d);", value, f->size * f->occurs_max);
 	} else if (f->size == 1) {
-		output ("*(cob_u8_ptr)(");
+		output ("*(cob_u8_ptr)/*codegen.c:4847*/(");
 		output_data (x);
 		output (") = %d;", value);
 	} else {
-		output ("memset (");
+		output ("memset/*codegen.c:4851*/ (");
 		output_data (x);
 		if (CB_REFERENCE_P(x) && CB_REFERENCE(x)->length) {
 			output (", %d, ", value);
@@ -4887,7 +4887,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 		 && l->data[0] == ' ')
 			return;
 		output_prefix ();
-		output ("memset (");
+		output ("memset/*codegen.c:4890*/ (");
 		output_data (x);
 		if (CB_REFERENCE_P(x) && CB_REFERENCE(x)->length) {
 			output (", %d, ", l->data[0]);
@@ -4901,7 +4901,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 	}
 	if (lsize >= size) {
 		output_prefix ();
-		output ("memcpy (");
+		output ("memcpy/*codegen.c:4904*/ (");
 		output_data (x);
 		output (", ");
 		output_string (l->data, size, l->llit);
@@ -4922,7 +4922,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 	 && !f->odo_level) {
 		int off;
 		output_prefix ();
-		output ("memcpy (");
+		output ("memcpy/*codegen.c:4925*/ (");
 		output_data (x);
 		output (", ");
 		output_string (l->data, lsize, l->llit);
@@ -4930,7 +4930,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 		output_newline ();
 		for (off = lsize; off+lsize < size; ) {
 			output_prefix ();
-			output ("memcpy (");
+			output ("memcpy/*codegen.c:4933*/ (");
 			output_data (x);
 			output (" + %d, ", off);
 			output_data (x);
@@ -4941,7 +4941,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 		}
 		if (off < size) {
 			output_prefix ();
-			output ("memcpy (");
+			output ("memcpy/*codegen.c:4944*/ (");
 			output_data (x);
 			output (" + %d, ", off);
 			output_data (x);
@@ -4965,7 +4965,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 		output_newline ();
 		output_block_open ();
 		output_prefix ();
-		output ("memcpy (");
+		output ("memcpy/*codegen.c:4968*/ (");
 		output_data (x);
 		output (" + (i0 * %d), ", lsize);
 		output_string (l->data, lsize, l->llit);
@@ -4975,7 +4975,7 @@ output_initialize_literal (cb_tree x, struct cb_field *f,
 		n = size % lsize;
 		if (n) {
 			output_prefix ();
-			output ("memcpy (");
+			output ("memcpy/*codegen.c:4978*/ (");
 			output_data (x);
 			output (" + (i0 * %d), ", lsize);
 			output_string (l->data, n, l->llit);
@@ -4989,7 +4989,7 @@ static void
 output_initialize_fp_bindec (cb_tree x, struct cb_field *f)
 {
 	output_prefix ();
-	output ("memset (");
+	output ("memset/*codegen.c:4992*/ (");
 	output_data (x);
 	output (", 0, %d);", (int)f->size);
 	output_newline ();
@@ -5004,7 +5004,7 @@ output_initialize_fp (cb_tree x, struct cb_field *f)
 	} else {
 		output ("{double temp = 0.0;");
 	}
-	output (" memcpy (");
+	output (" memcpy/*codegen.c:5007*/ (");
 	output_data (x);
 	output (", (void *)&temp, sizeof(temp));}");
 	output_newline ();
@@ -5022,11 +5022,11 @@ output_initialize_uniform (cb_tree x, struct cb_field *f,
 
 	output_prefix ();
 	if (size == 1) {
-		output ("*(cob_u8_ptr)(");
+		output ("*(cob_u8_ptr)/*codegen.c:5025*/(");
 		output_data (x);
 		output_char (") = ", cc, ";");
 	} else {
-		output ("memset (");
+		output ("memset/*codegen.c:5029*/ (");
 		output_data (x);
 		output_char (", ", cc, ", ");
 		if (size <= 0
@@ -5193,7 +5193,7 @@ output_initialize_to_value (struct cb_field *f, cb_tree x,
 	if (size == 1) {
 		const unsigned char c = l->data[0];
 		output_prefix ();
-		output ("*(cob_u8_ptr)(");
+		output ("*(cob_u8_ptr)/*codegen.c:5196*/(");
 		output_data (x);
 		output_char (") = ", c, ";");
 		output_newline ();
