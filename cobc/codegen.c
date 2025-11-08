@@ -1180,16 +1180,19 @@ output_data (cb_tree x)
 		struct cb_literal	*l = CB_LITERAL (x);
 #ifndef	COB_EBCDIC_MACHINE
 		if (cb_ebcdic_data && CB_TREE_CATEGORY (x) == CB_CATEGORY_NUMERIC) {
-			output ("(cob_u8_ptr)/*%s%s*/\"",
-					(l->sign < 0) ? "-" : (l->sign > 0) ? "+" : "",
-					(char *)l->data);
+			output ("(cob_u8_ptr)/*%s",
+				(l->sign < 0) ? "-" : (l->sign > 0) ? "+" : "");
+			for (i = 0; i < l->size; i++) {
+				output ("%c", ebcdic_to_ascii[l->data[i]]);
+			}
+			output ("*/\"");
 			if (l->sign < 0) {
 				output ("\\x%2.2X", cb_rt_minus);
 			} else if (l->sign > 0) {
 				output ("\\x%2.2X", cb_rt_plus);
 			}
 			for (i = 0; i < l->size; i++) {
-				output ("\\x%2.2X", ascii_to_ebcdic[l->data[i]]);
+				output ("\\x%2.2X", l->data[i]);
 			}
 			output ("\"");
 			break;

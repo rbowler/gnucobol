@@ -2722,6 +2722,7 @@ cb_build_numeric_literal (int sign, const void *data, const int scale)
 {
 	struct cb_literal *p;
 	cb_tree			l;
+	cob_u32_t		i;
 	/* using an intermediate char pointer for pointer arithmetic */
 	const char	*data_chr_ptr = data;
 
@@ -2754,6 +2755,14 @@ cb_build_numeric_literal (int sign, const void *data, const int scale)
 	p = build_literal (CB_CATEGORY_NUMERIC, data, strlen (data));
 	p->sign = (short)sign;
 	p->scale = scale;
+
+#ifndef	COB_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		for (i = 0; i < p->size; i++) {
+			p->data[i] = ascii_to_ebcdic[p->data[i]];
+		}
+	}
+#endif
 
 	l = CB_TREE (p);
 
