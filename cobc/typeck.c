@@ -12046,7 +12046,7 @@ cb_build_memset (cb_tree x, const int c)
 {
 	cb_tree source = cb_int_hex (c);
 	if (cb_field_size (x) == 1) {
-		return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12049*/", x, source);
+		return CB_BUILD_FUNCALL_2 ("$E", x, source);
 	}
 	return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12051*/",
 				   CB_BUILD_CAST_ADDRESS (x),
@@ -12499,7 +12499,7 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		bbyte = *buff;
 		if (f->size == 1) {
 			cobc_parse_free (buff);
-			return CB_BUILD_FUNCALL_2 ("assign$E/*typeck.c:12502*/", dst, cb_int_hex (bbyte));
+			return CB_BUILD_FUNCALL_2 ("$E", dst, cb_int_hex (bbyte));
 		}
 		for (i = 0; i < f->size; i++) {
 			if (bbyte != buff[i]) {
