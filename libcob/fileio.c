@@ -9225,6 +9225,8 @@ copy_file_to_fcd (cob_file *f, FCD3 *fcd)
 static void
 update_fcd_to_file (FCD3* fcd, cob_file *f, cob_field *fnstatus, int wasOpen)
 {
+	int status = COB_D2I (fcd->fileStatus[0]) * 10 + COB_D2I (fcd->fileStatus[1]);
+	save_status (f, fnstatus, status);
 	if (wasOpen >= 0) {
 		const int status_code_1 = isdigit(fcd->fileStatus[0])
 			? COB_D2I (fcd->fileStatus[0]) : 9;
