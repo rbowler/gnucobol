@@ -9243,6 +9243,10 @@ update_fcd_to_file (FCD3* fcd, cob_file *f, cob_field *fnstatus, int wasOpen)
 		}
 		if (fnstatus) {
 			memcpy (fnstatus->data, fcd->fileStatus, 2);
+			if (COB_MODULE_PTR->flag_ebcdic_data) {
+				fnstatus->data[0] = COB_MODULE_PTR->ascii_to_ebcdic_table[fnstatus->data[0]];
+				fnstatus->data[1] = COB_MODULE_PTR->ascii_to_ebcdic_table[fnstatus->data[1]];
+			}
 		}
 	}
 	if (wasOpen > 0) {
