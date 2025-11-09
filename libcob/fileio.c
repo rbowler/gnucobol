@@ -9838,6 +9838,7 @@ cob_extfh_open (EXTFH_FUNC callfh, cob_file *f,
 
 	/* Keep table of 'fcd' created */
 	sts = callfh (opcode, fcd);
+	update_fcd_to_file (fcd, f, fnstatus, 1);
 	if (f->file_status) {
 		if (memcmp(f->file_status,"00",2) == 0
 		 || memcmp(f->file_status,"05",2) == 0) {
@@ -9846,7 +9847,6 @@ cob_extfh_open (EXTFH_FUNC callfh, cob_file *f,
 	} else {
 		fcd->openMode &= ~OPEN_NOT_OPEN;
 	}
-	update_fcd_to_file (fcd, f, fnstatus, 1);
 	save_fcd_status (fcd, sts);
 }
 
