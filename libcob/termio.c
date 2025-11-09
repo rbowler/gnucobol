@@ -208,7 +208,10 @@ display_alnum (const cob_field *f, FILE *fp)
 	unsigned char *p = f->data;
 
 	while (p != end) {
-		const int chr = *p++;
+		int chr = *p++;
+		if (COB_MODULE_PTR->flag_ebcdic_data) {
+			chr = COB_MODULE_PTR->ebcdic_to_ascii_table[chr];
+		}
 		if (putc (chr, fp) != chr) {
 			break;
 		}
