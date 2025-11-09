@@ -1304,7 +1304,7 @@ typedef struct __cob_module {
 #define COB_MODULE_TRACE	2
 #define COB_MODULE_TRACEALL	4
 
-	unsigned char		unused[1];		/* Use these flags up later, added for alignment */
+	unsigned char		flag_ebcdic_data;	/* 1=ASCII machine holding data in EBCDIC, 0=native data */
 
 	unsigned int		module_stmt;		/* Position of last statement executed
 											   as modulated source line
@@ -1338,6 +1338,10 @@ typedef struct __cob_module {
 	const char		*section_name;		/* name of current active section */
 	const char		*paragraph_name;		/* name of current active pagagraph */
 	enum cob_statement	statement;		/* statement currently executed */
+
+	/* Translate tables used when ebcdic-data is enabled on an ASCII machine */
+	const unsigned char	*ebcdic_to_ascii_table;	/* EBCDIC to ASCII translation table */
+	const unsigned char	*ascii_to_ebcdic_table;	/* ASCII to EBCDIC translation table */
 
 } cob_module;
 

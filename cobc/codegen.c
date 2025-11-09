@@ -11440,6 +11440,22 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->module_sources = NULL;");
 	}
 
+#ifndef	COB_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		output_line ("module__->flag_ebcdic_data = 1;");
+		output_line ("module__->ebcdic_to_ascii_table = cob_ebcdic_ascii;");
+		output_line ("module__->ascii_to_ebcdic_table = cob_ascii_ebcdic;");
+	} else {
+		output_line ("module__->flag_ebcdic_data = 0;");
+		output_line ("module__->ebcdic_to_ascii_table = NULL;");
+		output_line ("module__->ascii_to_ebcdic_table = NULL;");
+	}
+#else
+	output_line ("module__->flag_ebcdic_data = 0;");
+	output_line ("module__->ebcdic_to_ascii_table = NULL;");
+	output_line ("module__->ascii_to_ebcdic_table = NULL;");
+#endif
+
 	output_block_close ();
 	output_newline ();
 }
@@ -13934,8 +13950,13 @@ codegen_init (struct cb_program *prog, const char *translate_name)
 		buff[pos] = 0;
 		output_name = cobc_check_string (buff);
 	}
+#ifndef	COB_EBCDIC_MACHINE
+	gen_ascii_ebcdic = cb_ebcdic_data ? 1 : 0;
+	gen_ebcdic_ascii = cb_ebcdic_data ? 1 : 0;
+#else
 	gen_ascii_ebcdic = 0;
 	gen_ebcdic_ascii = 0;
+#endif
 	gen_native = 0;
 	gen_figurative = 0;
 	non_nested_count = 0;
