@@ -98,7 +98,11 @@ display_numeric (cob_field *f, FILE *fp)
 		register unsigned char *q = COB_TERM_BUFF;
 		const unsigned char *end = q + size;
 		for ( ; q < end; ++q) {
-			if (putc (*q, fp) != *q) {
+			int chr = *q;
+			if (COB_MODULE_PTR->flag_ebcdic_data) {
+				chr = COB_MODULE_PTR->ebcdic_to_ascii_table[chr];
+			}
+			if (putc (chr, fp) != chr) {
 				break;
 			}
 		}
@@ -193,7 +197,11 @@ pretty_display_numeric (cob_field *f, FILE *fp)
 			register unsigned char *q = COB_TERM_BUFF;
 			const unsigned char *end = q + size;
 			for ( ; q < end; ++q) {
-				if (putc (*q, fp) != *q) {
+				int chr = *q;
+				if (COB_MODULE_PTR->flag_ebcdic_data) {
+					chr = COB_MODULE_PTR->ebcdic_to_ascii_table[chr];
+				}
+				if (putc (chr, fp) != chr) {
 					break;
 				}
 			}
