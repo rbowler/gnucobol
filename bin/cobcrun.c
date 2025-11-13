@@ -488,11 +488,7 @@ main (int argc, char **argv)
 	/* Initialize the COBOL system, ... */
 	/* Note: we use cob_init_nomain here as there are no functions
 	         linked here we want to provide for the COBOL environment */
-	if (exec_parm_wanted) {
-		cob_init_nomain (exec_parm_argc, exec_parm_argv);
-	} else {
-		cob_init_nomain (argc - arg_shift, &argv[arg_shift]);
-	}
+	cob_init_nomain (argc - arg_shift, &argv[arg_shift]);
 	if (print_runtime_wanted) {
 		print_runtime_conf ();
 		putc ('\n', stdout);
