@@ -1090,12 +1090,22 @@ cob_resolve_cobol (const char *name, const int fold_case, const int errind)
 	void	*p;
 	char	*entry;
 	char	*dirent;
+	size_t	i;
+	char 	call_name_ascii[COB_MINI_BUFF];
 
 	/* LCOV_EXCL_START */
 	if (unlikely (!cobglobptr)) {
 		cob_fatal_error (COB_FERROR_INITIALIZED);
 	}
 	/* LCOV_EXCL_STOP */
+
+	if (COB_MODULE_PTR && COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; i < strlen(name) && i < sizeof(call_name_ascii) - 1; i++) {
+			call_name_ascii[i] = COB_MODULE_PTR->ebcdic_to_ascii_table[(unsigned char)name[i]];
+		}
+		call_name_ascii[i] = 0;
+		name = call_name_ascii;
+	}
 
 	entry = cob_chk_call_path (name, &dirent);
 	p = cob_resolve_internal (entry, dirent, fold_case, COB_MODULE_TYPE_PROGRAM, 1);
