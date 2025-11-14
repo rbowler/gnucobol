@@ -45,8 +45,6 @@ static struct {
 	unsigned char length[2];
 	unsigned char text[MAX_EXEC_PARM_TEXT_SIZE];
 } __attribute__((packed)) exec_parm;
-static const int exec_parm_argc = 1;
-static char *exec_parm_argv[1] = { (char *)&exec_parm };
 
 static const char short_options[] = "+hirc:VvqM:p:";
 
