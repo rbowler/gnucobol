@@ -160,8 +160,8 @@ store_common_region (cob_field *f, const unsigned char *data,
 	const unsigned char *p = data;
 	const unsigned char *end = data + hf1 - gcf;
 	while (p < end) {
-		if ((COB_FIELD_IS_NUMERIC (f) && (*p != '0'))
-		 || (COB_FIELD_IS_ANY_ALNUM (f) && (*p != ' '))) {
+		if ((COB_FIELD_IS_NUMERIC (f) && (*p != COB_MODULE_PTR->rt_zero))
+		 || (COB_FIELD_IS_ANY_ALNUM (f) && (*p != COB_MODULE_PTR->rt_space))) {
 			cob_set_exception (COB_EC_DATA_TRUNCATION);
 			break;
 		}
@@ -174,7 +174,7 @@ store_common_region (cob_field *f, const unsigned char *data,
 	   we pre-set all positions as this saves a bunch of
 	   calculations which outweight the benefit of not
 	   writing over the data two times */
-	memset (fdata, '0', fsize);
+	memset (fdata, COB_MODULE_PTR->rt_zero, fsize);
 
 	/* note: skipping zeroes in the source data was tested but
 	   has shown to be slower than copying those along */
@@ -188,14 +188,14 @@ store_common_region (cob_field *f, const unsigned char *data,
 			register const unsigned char	*end = dst + gcf - lcf;
 
 			while (dst < end) {
-				const char src_data = *src++;
+				const unsigned char src_data = *src++;
 #if 0		/* seems to be the best result, ..." */
 				/* we don't want to set bad data, so
 				   only take the half byte */
 				*dst = COB_I2D (COB_D2I (src_data));
 #else		/* but does not match the "expected" MF result, which is: */
-				if (src_data == ' ' || src_data == 0) /* already set: *dst = '0'; */ ;
-				else *dst = COB_I2D (src_data - '0');
+				if (src_data == COB_MODULE_PTR->rt_space || src_data == 0) /* already set: *dst = COB_MODULE_PTR->rt_zero; */ ;
+				else *dst = COB_I2D (src_data - COB_MODULE_PTR->rt_zero);
 #endif
 				++dst;
 			}
@@ -314,7 +314,7 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 	int		size;
 
 	/* Initialize */
-	memset (f2->data, '0', f2->size);
+	memset (f2->data, COB_MODULE_PTR->rt_zero, f2->size);
 
 	/* Skip white spaces */
 	for (; s1 < e1; ++s1) {
@@ -326,8 +326,8 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 	/* Check for sign */
 	sign = 0;
 	if (s1 != e1) {
-		if (*s1 == '+' || *s1 == '-') {
-			sign = (*s1++ == '+') ? 1 : -1;
+		if (*s1 == COB_MODULE_PTR->rt_plus || *s1 == COB_MODULE_PTR->rt_minus) {
+			sign = (*s1++ == COB_MODULE_PTR->rt_plus) ? 1 : -1;
 		}
 	}
 
@@ -338,7 +338,7 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 		for (p = s1; p < e1 && *p != dec_pt; ++p) {
 			/* note: as isdigit is locale-aware (slower and not what we want),
 			   we use a range check instead */
-			if (*p >= '0' && *p <= '9') {
+			if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 				++count;
 			}
 		}
@@ -350,7 +350,7 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 		s2 += size - count;
 	} else {
 		while (count-- > size) {
-			while (*s1 < '0' || *s1 > '9') {
+			while (*s1 < COB_MODULE_PTR->rt_zero || *s1 > COB_MODULE_PTR->rt_nine) {
 				s1++;
 			}
 			s1++;
@@ -360,7 +360,7 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 	/* Move */
 	count = 0;
 	for (; s1 < e1 && s2 < e2; ++s1) {
-		if (*s1 >= '0' && *s1 <= '9') {
+		if (*s1 >= COB_MODULE_PTR->rt_zero && *s1 <= COB_MODULE_PTR->rt_nine) {
 			*s2++ = *s1;
 		} else if (*s1 == dec_pt) {
 			if (count++ > 0) {
@@ -375,7 +375,7 @@ cob_move_alphanum_to_display (cob_field *f1, cob_field *f2)
 	return;
 
 error:
-	memset (f2->data, '0', f2->size);
+	memset (f2->data, COB_MODULE_PTR->rt_zero, f2->size);
 	COB_PUT_SIGN (f2, 0);
 }
 
@@ -416,13 +416,13 @@ cob_move_display_to_alphanum (cob_field *f1, cob_field *f2)
 			/* Implied 0 ('P's) */
 			zero_size = cob_min_int (zero_size, (int)size2);
 			size2 -= zero_size;
-			memset (data2 + size2, '0', (size_t) zero_size);
+			memset (data2 + size2, COB_MODULE_PTR->rt_zero, (size_t) zero_size);
 		}
 		if (size2) {
 			diff = (int)(size2 - size1);
 			if (diff > 0) {
 				/* Padding */
-				memset (data2, ' ', (size_t)diff);
+				memset (data2, COB_MODULE_PTR->rt_space, (size_t)diff);
 				data2 += diff;
 				size2 -= diff;
 			}
@@ -437,12 +437,12 @@ cob_move_display_to_alphanum (cob_field *f1, cob_field *f2)
 			if (zero_size) {
 				/* Implied 0 ('P's) */
 				zero_size = cob_min_int (zero_size, diff);
-				memset (data2 + size1, '0', (size_t)zero_size);
+				memset (data2 + size1, COB_MODULE_PTR->rt_zero, (size_t)zero_size);
 				diff -= zero_size;
 			}
 			if (diff) {
 				/* Padding */
-				memset (data2 + size1 + zero_size, ' ',
+				memset (data2 + size1 + zero_size, COB_MODULE_PTR->rt_space,
 					(size_t)diff);
 			}
 		}
@@ -473,11 +473,11 @@ cob_move_alphanum_to_alphanum (cob_field *f1, cob_field *f2)
 	} else {
 		/* Move string with padding */
 		if (COB_FIELD_JUSTIFIED (f2)) {
-			memset (data2, ' ', size2 - size1);
+			memset (data2, COB_MODULE_PTR->rt_space, size2 - size1);
 			memmove (data2 + size2 - size1, data1, size1);
 		} else {
 			memmove (data2, data1, size1);
-			memset (data2 + size1, ' ', size2 - size1);
+			memset (data2 + size1, COB_MODULE_PTR->rt_space, size2 - size1);
 		}
 	}
 }
@@ -1022,10 +1022,10 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	int		have_check_protect = 0;
 	int		cntr_currency = 0;
 	int		cntr_sign = 0;
-	unsigned char	pad = ' ';
+	unsigned char	pad = COB_MODULE_PTR->rt_space;
 	unsigned char	c;
 	unsigned char	float_char = 0x00;
-	const unsigned char dec_symbol = COB_MODULE_PTR->decimal_point == ',' ? ',' : '.';
+	const unsigned char dec_symbol = COB_MODULE_PTR->decimal_point == ',' ? COB_MODULE_PTR->rt_comma : COB_MODULE_PTR->rt_dot;
 	const unsigned char currency = COB_MODULE_PTR->currency_symbol;
 
 #ifndef NDEBUG	/* Sanity check to ensure that the data types of both the fields have the
@@ -1066,9 +1066,9 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	}
 
 	switch (c) {
-		case '-' : float_char = c; break;
-		case '+' : float_char = c; break;
-		case '*' : pad = c; break;
+		case '-' : float_char = COB_MODULE_PTR->rt_minus; break;
+		case '+' : float_char = COB_MODULE_PTR->rt_plus; break;
+		case '*' : pad = COB_MODULE_PTR->rt_aster; break;
 		default:
 			if (c == currency) {
 				float_char = c;
@@ -1092,7 +1092,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 			if (COB_D2I (*check) != 0) break;
 		}
 		if (check > check_end) {
-			memset (dst, ' ', f2->size);
+			memset (dst, COB_MODULE_PTR->rt_space, f2->size);
 			/* Restore the source sign */
 			COB_PUT_SIGN (f1, sign);
 			return;
@@ -1133,7 +1133,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 			case 'Z':
 				src_num = COB_D2I (*src);
 				*dst = COB_I2D (src_num);
-				pad = ' ';
+				pad = COB_MODULE_PTR->rt_space;
 				if (src_num != 0) {
 					is_zero = suppress_zero = 0;
 				} else {
@@ -1176,7 +1176,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 				} else {
 					src_num = COB_D2I (*src);
 					if (src_num == 0 && suppress_zero && !have_decimal_point) {
-						*prev_float_char = ' ';
+						*prev_float_char = COB_MODULE_PTR->rt_space;
 						prev_float_char = dst;
 						sign_position   = dst;
 						*dst = c;
@@ -1206,7 +1206,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 							*dst = *prev_float_char;
 							*prev_float_char = pad;
 							prev_float_char = dst;
-							if (*dst == '-' || *dst == '+') {
+							if (*dst == COB_MODULE_PTR->rt_minus || *dst == COB_MODULE_PTR->rt_plus) {
 								sign_position = dst;
 							}
 						}
@@ -1249,7 +1249,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 				} else if (have_check_protect) {
 					*dst = pad;
 				} else {
-					*dst = ' ';
+					*dst = COB_MODULE_PTR->rt_space;
 				}
 				dst++;
 				break;
@@ -1262,12 +1262,12 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 				/* Check negative and not zero */
 				if (neg && !is_zero) {
 					if (c == 'C') {
-						memcpy (dst, "CR", (size_t)2);
+						memcpy (dst, COB_MODULE_PTR->rt_CR, (size_t)2);
 					} else {
-						memcpy (dst, "DB", (size_t)2);
+						memcpy (dst, COB_MODULE_PTR->rt_DB, (size_t)2);
 					}
 				} else {
-					memset (dst, ' ', (size_t)2);
+					memset (dst, COB_MODULE_PTR->rt_space, (size_t)2);
 				}
 				dst += 2;
 				break;
@@ -1293,7 +1293,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 				} else {
 					src_num = COB_D2I (*src);
 					if ((src_num == 0) && (suppress_zero) && (!have_decimal_point)) {
-						*prev_float_char = ' ';
+						*prev_float_char = COB_MODULE_PTR->rt_space;
 						prev_float_char = dst;
 						*dst = c;
 						dst++;
@@ -1329,11 +1329,11 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 		if (pad == '*') {
 			for (dst = f2->data; dst < dst_end; dst++) {
 				if (*dst != dec_symbol) {
-					*dst = '*';
+					*dst = COB_MODULE_PTR->rt_aster;
 				}
 			}
 		} else {
-			memset (f2->data, ' ', f2->size);
+			memset (f2->data, COB_MODULE_PTR->rt_space, f2->size);
 			return;
 		}
 	}
@@ -1456,17 +1456,17 @@ cob_move_alphanum_to_edited (cob_field *f1, cob_field *f2)
 			case 'A':
 			case 'X':
 			case '9':
-				*dst++ = (src < max) ? *src++ : ' ';
+				*dst++ = (src < max) ? *src++ : COB_MODULE_PTR->rt_space;
 				break;
 			case '0':
 			case '/':
 				*dst++ = c;
 				break;
 			case 'B':
-				*dst++ = ' ';
+				*dst++ = COB_MODULE_PTR->rt_space;
 				break;
 			default:
-				*dst++ = '?';	/* Invalid PIC */
+				*dst++ = COB_MODULE_PTR->rt_query;	/* Invalid PIC */
 			}
 		}
 	}
@@ -1650,7 +1650,7 @@ cob_move (cob_field *src, cob_field *dst)
 		temp.size = 1;
 		temp.data = data;
 		temp.attr = &const_alpha_attr;
-		data[0] = ' ';
+		data[0] = COB_MODULE_PTR->rt_space;
 		data[1] = 0;
 		src = &temp;
 	}
@@ -2881,26 +2881,26 @@ cob_put_s64_pic9 (cob_s64_t val, void *mem, int len)
 		return;
 	}
 
-	memset (mem, '0', len);
+	memset (mem, COB_MODULE_PTR->rt_zero, len);
 	if (val < 0) {
 		num = -val;
 		if (COB_MODULE_PTR->ebcdic_sign) {
 			p[--len] = (cob_u8_t)ebcdic_neg[num % 10];
 		} else {
-			p[--len] = (cob_u8_t)('0' + (num % 10)) | 0x40;
+			p[--len] = (cob_u8_t)(COB_MODULE_PTR->rt_zero + (num % 10)) | 0x40;
 		}
 	} else {
 		num = val;
 		if (COB_MODULE_PTR->ebcdic_sign) {
 			p[--len] = (cob_u8_t)ebcdic_pos[num % 10];
 		} else {
-			p[--len] =  (cob_u8_t)('0' + (num % 10));
+			p[--len] =  (cob_u8_t)(COB_MODULE_PTR->rt_zero + (num % 10));
 		}
 	}
 	num = num / 10;
 	while (num > 0
 	    && len-- > 0) {
-		p[len] = (cob_u8_t) ('0' + num % 10);
+		p[len] = (cob_u8_t) (COB_MODULE_PTR->rt_zero + num % 10);
 		num = num / 10;
 	}
 }
@@ -2915,18 +2915,18 @@ cob_get_s64_pic9 (void *mem, int len)
 	while (len-- > 1) {
 		/* note: as isdigit is locale-aware (slower and not what we want),
 		   we use a range check instead */
-		if (*p >= '0' && *p <= '9') {
+		if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 			val = val * 10 + COB_D2I (*p);
-		} else if (*p == '-') {
+		} else if (*p == COB_MODULE_PTR->rt_minus) {
 			sign = -1;
 		}
 		p++;
 	}
-	if (*p >= '0' && *p <= '9') {
+	if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 		val = val * 10 + COB_D2I (*p);
-	} else if (*p == '-') {
+	} else if (*p == COB_MODULE_PTR->rt_minus) {
 		sign = -1;
-	} else if (*p == '+') {
+	} else if (*p == COB_MODULE_PTR->rt_plus) {
 		sign = 1;
 	} else if (COB_MODULE_PTR->ebcdic_sign) {
 #ifndef	COB_EBCDIC_MACHINE
@@ -2979,10 +2979,10 @@ cob_put_u64_pic9 (cob_u64_t val, void *mem, int len)
 	cob_u64_t	num = val;
 	cob_u8_t	*p = mem;
 
-	memset (mem, '0', len);
+	memset (mem, COB_MODULE_PTR->rt_zero, len);
 	while (num > 0
 	    && len-- > 0) {
-		p[len] = (cob_u8_t) ('0' + num % 10);
+		p[len] = (cob_u8_t) (COB_MODULE_PTR->rt_zero + num % 10);
 		num = num / 10;
 	}
 }
@@ -3065,6 +3065,6 @@ cob_put_picx (void *cbl_data, size_t len, void *string)
 	}
 	memcpy (cbl_data, string, j);
 	for (i = j; i < len; i++) {
-		p[i] = ' ';
+		p[i] = COB_MODULE_PTR->rt_space;
 	}
 }
