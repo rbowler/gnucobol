@@ -11445,10 +11445,28 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->flag_ebcdic_data = 1;");
 		output_line ("module__->ebcdic_to_ascii_table = cob_ebcdic_ascii;");
 		output_line ("module__->ascii_to_ebcdic_table = cob_ascii_ebcdic;");
+		output_line ("module__->rt_space = 0x%2.2X;", cb_rt_space);
+		output_line ("module__->rt_plus = 0x%2.2X;", cb_rt_plus);
+		output_line ("module__->rt_minus = 0x%2.2X;", cb_rt_minus);
+		output_line ("module__->rt_aster = 0x%2.2X;", cb_rt_aster);
+		output_line ("module__->rt_slash = 0x%2.2X;", cb_rt_slash);
+		output_line ("module__->rt_quote = 0x%2.2X;", cb_rt_quote);
+		output_line ("module__->rt_apost = 0x%2.2X;", cb_rt_apost);
+		output_line ("module__->rt_zero = 0x%2.2X;", cb_rt_zero);
+		output_line ("module__->rt_nine = 0x%2.2X;", cb_rt_nine);
 	} else {
 		output_line ("module__->flag_ebcdic_data = 0;");
 		output_line ("module__->ebcdic_to_ascii_table = NULL;");
 		output_line ("module__->ascii_to_ebcdic_table = NULL;");
+		output_line ("module__->rt_space = '%c';", cb_rt_space);
+		output_line ("module__->rt_plus = '%c';", cb_rt_plus);
+		output_line ("module__->rt_minus = '%c';", cb_rt_minus);
+		output_line ("module__->rt_aster = '%c';", cb_rt_aster);
+		output_line ("module__->rt_slash = '%c';", cb_rt_slash);
+		output_line ("module__->rt_quote = '%c';", cb_rt_quote);
+		output_line ("module__->rt_apost = '%c';", cb_rt_apost);
+		output_line ("module__->rt_zero = '%c';", cb_rt_zero);
+		output_line ("module__->rt_nine = '%c';", cb_rt_nine);
 	}
 #else
 	output_line ("module__->flag_ebcdic_data = 0;");

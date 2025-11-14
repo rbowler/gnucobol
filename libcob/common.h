@@ -1343,6 +1343,17 @@ typedef struct __cob_module {
 	const unsigned char	*ebcdic_to_ascii_table;	/* EBCDIC to ASCII translation table */
 	const unsigned char	*ascii_to_ebcdic_table;	/* ASCII to EBCDIC translation table */
 
+	/* Run-time values of special characters */
+	unsigned char		rt_space;		/* SPACE */
+	unsigned char		rt_plus;		/* PLUS */
+	unsigned char		rt_minus;		/* MINUS */
+	unsigned char		rt_aster;		/* ASTERISK */
+	unsigned char		rt_slash;		/* SLASH */
+	unsigned char		rt_quote;		/* QUOTE */
+	unsigned char		rt_apost;		/* APOSTROPHE */
+	unsigned char		rt_zero;		/* ZERO */
+	unsigned char		rt_nine;		/* NINE */
+
 } cob_module;
 
 
