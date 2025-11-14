@@ -62,7 +62,7 @@ static const struct option long_options[] = {
 	{"runtime-config",		CB_NO_ARG, NULL, 'r'},
 	{"config",		CB_RQ_ARG, NULL, 'C'},
 	{"module",		CB_RQ_ARG, NULL, 'm'},
-	{"exec-parm",		CB_RQ_ARG, NULL, 'p'},
+	{"exec-parm",		CB_RQ_ARG, NULL, 'P'},
 	{NULL, 0, NULL, 0}
 };
 
@@ -411,6 +411,7 @@ process_command_line (int argc, char *argv[])
 			break;
 
 		case 'p':
+		case 'P':
 			/* -p <parameter>, --exec-parm=<parameter> */
 			exec_parm_wanted = 1;
 			arg_shift++;
@@ -425,7 +426,10 @@ process_command_line (int argc, char *argv[])
 			}
 			exec_parm.length[0] = (unsigned char)(strlen (cob_optarg) >> 8);
 			exec_parm.length[1] = (unsigned char)(strlen (cob_optarg) & 0xFF);
-			arg_shift++;
+			/* shift argument again if two part argument was used */
+			if (c == 'p') {
+				arg_shift++;
+			}
 			break;
 
 		/* LCOV_EXCL_START */
