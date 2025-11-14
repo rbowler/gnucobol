@@ -295,6 +295,7 @@ static void
 process_command_line (int argc, char *argv[])
 {
 	int			c, idx;
+	size_t			i;
 	const char		*err_msg;
 	
 #if defined (_WIN32) || defined (__DJGPP__)
@@ -419,7 +420,7 @@ process_command_line (int argc, char *argv[])
 				fflush (stderr);
 				exit (EXIT_FAILURE);
 			}
-			for (int i = 0; i < strlen (cob_optarg); i++) {
+			for (i = 0; i < strlen (cob_optarg); i++) {
 				exec_parm.text[i] = cp819_to_cp1047[(unsigned char)cob_optarg[i]];
 			}
 			exec_parm.length[0] = (unsigned char)(strlen (cob_optarg) >> 8);
