@@ -267,6 +267,9 @@ int			cb_flag_copybook_deps = 0;
 
 /* Run-time values of special characters */
 unsigned char		cb_rt_space = ' ';
+unsigned char		cb_rt_dot = '.';
+unsigned char		cb_rt_comma = ',';
+unsigned char		cb_rt_query = '?';
 unsigned char		cb_rt_plus = '+';
 unsigned char		cb_rt_minus = '-';
 unsigned char		cb_rt_aster = '*';
@@ -275,6 +278,8 @@ unsigned char		cb_rt_quote = '"';
 unsigned char		cb_rt_apost = '\'';
 unsigned char		cb_rt_zero = '0';
 unsigned char		cb_rt_nine = '9';
+unsigned char		cb_rt_CR[2] = { 'C', 'R' };
+unsigned char		cb_rt_DB[2] = { 'D', 'B' };
 
 /* set by option -fttitle=<title> */
 char                    *cb_listing_with_title = NULL;
@@ -9619,6 +9624,9 @@ main (int argc, char **argv)
 	   if using EBCDIC data on a non-EBCDIC machine */
 	if (cb_ebcdic_data) {
 		cb_rt_space = 0x40;
+		cb_rt_dot = 0x4B;
+		cb_rt_comma = 0x6B;
+		cb_rt_query = 0x6F;
 		cb_rt_plus = 0x4E;
 		cb_rt_minus = 0x60;
 		cb_rt_aster = 0x5C;
@@ -9627,6 +9635,8 @@ main (int argc, char **argv)
 		cb_rt_apost = 0x7D;
 		cb_rt_zero = 0xF0;
 		cb_rt_nine = 0xF9;
+		memcpy(cb_rt_CR, "\xC3\xD9", 2);
+		memcpy(cb_rt_DB, "\xC4\xC2", 2);
 	}
 #endif
 

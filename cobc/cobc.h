@@ -511,6 +511,9 @@ extern const char		*cb_ebcdic_table;
 
 /* Run-time values of special characters */
 extern unsigned char		cb_rt_space;
+extern unsigned char		cb_rt_dot;
+extern unsigned char		cb_rt_comma;
+extern unsigned char		cb_rt_query;
 extern unsigned char		cb_rt_plus;
 extern unsigned char		cb_rt_minus;
 extern unsigned char		cb_rt_aster;
@@ -519,6 +522,8 @@ extern unsigned char		cb_rt_quote;
 extern unsigned char		cb_rt_apost;
 extern unsigned char		cb_rt_zero;
 extern unsigned char		cb_rt_nine;
+extern unsigned char		cb_rt_CR[2];
+extern unsigned char		cb_rt_DB[2];
 
 /* Functions */
 

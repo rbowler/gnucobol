@@ -1345,6 +1345,9 @@ typedef struct __cob_module {
 
 	/* Run-time values of special characters */
 	unsigned char		rt_space;		/* SPACE */
+	unsigned char		rt_dot;			/* DOT */
+	unsigned char		rt_comma;		/* COMMA */
+	unsigned char		rt_query;		/* QUESTION MARK */
 	unsigned char		rt_plus;		/* PLUS */
 	unsigned char		rt_minus;		/* MINUS */
 	unsigned char		rt_aster;		/* ASTERISK */
@@ -1353,6 +1356,8 @@ typedef struct __cob_module {
 	unsigned char		rt_apost;		/* APOSTROPHE */
 	unsigned char		rt_zero;		/* ZERO */
 	unsigned char		rt_nine;		/* NINE */
+	unsigned char		rt_CR[2];		/* CR */
+	unsigned char		rt_DB[2];		/* DB */
 
 } cob_module;
 
