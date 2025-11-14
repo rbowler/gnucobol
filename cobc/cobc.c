@@ -9635,8 +9635,8 @@ main (int argc, char **argv)
 		cb_rt_apost = 0x7D;
 		cb_rt_zero = 0xF0;
 		cb_rt_nine = 0xF9;
-		memcpy(cb_rt_CR, "\xC3\xD9", 2);
-		memcpy(cb_rt_DB, "\xC4\xC2", 2);
+		cb_rt_CR[0] = 0xC3; cb_rt_CR[1] = 0xD9;
+		cb_rt_DB[0] = 0xC4; cb_rt_DB[1] = 0xC2;
 	}
 #endif
 

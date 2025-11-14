@@ -11457,8 +11457,10 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_apost = 0x%2.2X;", cb_rt_apost);
 		output_line ("module__->rt_zero = 0x%2.2X;", cb_rt_zero);
 		output_line ("module__->rt_nine = 0x%2.2X;", cb_rt_nine);
-		output_line ("memcpy(module__->rt_CR, cb_rt_CR, 2);");
-		output_line ("memcpy(module__->rt_DB, cb_rt_DB, 2);");
+		output_line ("module__->rt_CR[0] = 0x%2.2X;", cb_rt_CR[0]);
+		output_line ("module__->rt_CR[1] = 0x%2.2X;", cb_rt_CR[1]);
+		output_line ("module__->rt_DB[0] = 0x%2.2X;", cb_rt_DB[0]);
+		output_line ("module__->rt_DB[1] = 0x%2.2X;", cb_rt_DB[1]);
 	} else {
 		output_line ("module__->flag_ebcdic_data = 0;");
 		output_line ("module__->ebcdic_to_ascii_table = NULL;");
@@ -11475,8 +11477,10 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_apost = '%c';", cb_rt_apost);
 		output_line ("module__->rt_zero = '%c';", cb_rt_zero);
 		output_line ("module__->rt_nine = '%c';", cb_rt_nine);
-		output_line ("memcpy(module__->rt_CR, cb_rt_CR, 2);");
-		output_line ("memcpy(module__->rt_DB, cb_rt_DB, 2);");
+		output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
+		output_line ("module__->rt_CR[1] = '%c';", cb_rt_CR[1]);
+		output_line ("module__->rt_DB[0] = '%c';", cb_rt_DB[0]);
+		output_line ("module__->rt_DB[1] = '%c';", cb_rt_DB[1]);
 	}
 #else
 	output_line ("module__->flag_ebcdic_data = 0;");
@@ -11494,8 +11498,10 @@ output_module_init_function (struct cb_program *prog)
 	output_line ("module__->rt_apost = '%c';", cb_rt_apost);
 	output_line ("module__->rt_zero = '%c';", cb_rt_zero);
 	output_line ("module__->rt_nine = '%c';", cb_rt_nine);
-	output_line ("memcpy(module__->rt_CR, cb_rt_CR, 2);");
-	output_line ("memcpy(module__->rt_DB, cb_rt_DB, 2);");
+	output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
+	output_line ("module__->rt_CR[1] = '%c';", cb_rt_CR[1]);
+	output_line ("module__->rt_DB[0] = '%c';", cb_rt_DB[0]);
+	output_line ("module__->rt_DB[1] = '%c';", cb_rt_DB[1]);
 #endif
 
 	output_block_close ();
