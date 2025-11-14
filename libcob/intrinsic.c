@@ -4292,6 +4292,7 @@ cob_intr_when_compiled (const int offset, const int length, cob_field *f)
 cob_field *
 cob_intr_current_date (const int offset, const int length)
 {
+	size_t		i;
 	cob_field	field;
 	struct cob_time time;
 	char		buff[22] = { '\0' };
@@ -4311,7 +4312,13 @@ cob_intr_current_date (const int offset, const int length)
 
 	add_offset_time (0, &time.utc_offset, 16, buff);
 
-	memcpy (curr_field->data, buff, (size_t)21);
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; i < 21; i++) {
+			curr_field->data[i] = COB_MODULE_PTR->ascii_to_ebcdic_table[(unsigned char)buff[i]];
+		}
+	} else {
+		memcpy (curr_field->data, buff, (size_t)21);
+	}
 	if (offset != 0) {
 		calc_ref_mod (curr_field, offset, length);
 	}
