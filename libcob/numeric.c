@@ -268,6 +268,21 @@ cob_gmp_free (void * ptr) {
 #endif
 }
 
+static char *cob_mpz_get_str (char *str, int base, const mpz_t op) {
+	size_t i;
+	char *p = mpz_get_str (str, base, op);
+	if (p && COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; p[i] != '\0'; i++) {
+			p[i] = COB_MODULE_PTR->ascii_to_ebcdic_table[(unsigned char)p[i]];
+		}
+	}
+	return p;
+}
+#ifdef mpz_get_str
+	#undef mpz_get_str
+#endif
+#define mpz_get_str cob_mpz_get_str
+
 static COB_INLINE COB_A_INLINE cob_s64_t
 cob_binary_get_sint64 (const cob_field * const f)
 {
@@ -1555,7 +1570,7 @@ cob_decimal_get_display (cob_decimal *d, cob_field *f, const int opt)
 
 	/* check for value zero (allows early exit) and handle sign */
 	if (sign == 0) {
-		memset (data, '0', fsize);
+		memset (data, COB_MODULE_PTR->rt_zero, fsize);
 		COB_PUT_SIGN (f, 0);
 		return 0;
 	}
@@ -1589,7 +1604,7 @@ cob_decimal_get_display (cob_decimal *d, cob_field *f, const int opt)
 			memcpy (data, p - diff, fsize);
 		} else {
 			/* No overflow */
-			memset (data, '0', diff);
+			memset (data, COB_MODULE_PTR->rt_zero, diff);
 			memcpy (data + diff, p, size);
 		}
 
@@ -1626,7 +1641,7 @@ cob_decimal_get_display (cob_decimal *d, cob_field *f, const int opt)
 		size_t		size, diff;
 		size = strlen (buff);
 		diff = fsize - size;
-		memset (data, '0', diff);
+		memset (data, COB_MODULE_PTR->rt_zero, diff);
 		memcpy (data + diff, buff, size);
 	}
 	COB_PUT_SIGN (f, sign);
@@ -3423,10 +3438,10 @@ display_add_int (unsigned char *data, const size_t size, int n, const int opt)
 		is = (*sp & 0x0F) + i + carry;
 		if (is > 9) {
 			carry = 1;
-			*sp = '0' + ((is + 6) & 0x0F);
+			*sp = COB_MODULE_PTR->rt_zero + ((is + 6) & 0x0F);
 		} else {
 			carry = 0;
-			*sp = '0' + is;
+			*sp = COB_MODULE_PTR->rt_zero + is;
 		}
 	}
 	if (carry == 0) {
@@ -3435,10 +3450,10 @@ display_add_int (unsigned char *data, const size_t size, int n, const int opt)
 
 	/* Carry up */
 	while (--sp >= data) {
-		if ((*sp += 1) <= (unsigned char)'9') {
+		if ((*sp += 1) <= COB_MODULE_PTR->rt_nine) {
 			return 0;
 		}
-		*sp = '0';
+		*sp = COB_MODULE_PTR->rt_zero;
 	}
 	return opt;
 }
@@ -3464,10 +3479,10 @@ display_sub_int (unsigned char *data, const size_t size, int n, const int opt)
 
 #if	0	/* RXWRXW - Garbage check */
 		/* Correct garbage */
-		*sp = (unsigned char)('0' + (*sp & 0x0F));
+		*sp = (unsigned char)(COB_MODULE_PTR->rt_zero + (*sp & 0x0F));
 #endif
 		/* Perform subtraction */
-		if ((*sp -= i + carry) < '0') {
+		if ((*sp -= i + carry) < COB_MODULE_PTR->rt_zero) {
 			carry = 1;
 			*sp += 10;
 		} else {
@@ -3482,12 +3497,12 @@ display_sub_int (unsigned char *data, const size_t size, int n, const int opt)
 	while (--sp >= data) {
 #if	0	/* RXWRXW - Garbage check */
 		/* Correct garbage */
-		*sp = (unsigned char)('0' + (*sp & 0x0F));
+		*sp = (unsigned char)(COB_MODULE_PTR->rt_zero + (*sp & 0x0F));
 #endif
-		if ((*sp -= 1) >= (unsigned char)'0') {
+		if ((*sp -= 1) >= COB_MODULE_PTR->rt_zero) {
 			return 0;
 		}
-		*sp = '9';
+		*sp = COB_MODULE_PTR->rt_nine;
 	}
 	return 1;
 }
@@ -4566,7 +4581,7 @@ cob_cmp_numdisp (const unsigned char *data, const size_t size,
 		val = val * 10 + COB_D2I (*p++);
 	}
 	val *= 10;
-	if (*p >= (unsigned char)'0' && *p <= (unsigned char)'9') {
+	if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 		val += COB_D2I (*p);
 	} else {
 		if (unlikely (COB_MODULE_PTR->ebcdic_sign)) {
