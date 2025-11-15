@@ -249,7 +249,7 @@ Note: also defined together with __clang__ in both frontends:
 
 /* Convert between a digit and an integer (e.g., '0' <-> 0) */
 #define COB_D2I(x)		((x) & 0x0F)
-#define COB_I2D(x)		(char) ('0' + (x))
+#define COB_I2D(x)		(char) (COB_MODULE_PTR->rt_zero + (x))
 
 #define	COB_MODULE_PTR		cobglobptr->cob_current_module
 #define	COB_TERM_BUFF		cobglobptr->cob_term_buff
