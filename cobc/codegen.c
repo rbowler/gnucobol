@@ -4820,9 +4820,9 @@ initialize_uniform_char (const struct cb_field *f,
 		case COB_TYPE_NUMERIC_BINARY:
 			return 0;
 		case COB_TYPE_NUMERIC_DISPLAY:
-			return cb_rt_zero;
+			return '0';
 		case COB_TYPE_ALPHANUMERIC:
-			return cb_rt_space;
+			return ' ';
 		default:
 			return -1;
 		}
