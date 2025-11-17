@@ -3929,7 +3929,7 @@ cob_real_put_sign (cob_field *f, const int sign)
 		/* Note: we only locate the sign if needed,
 		   as the common case will be "nothing to do" */
 		if (unlikely (COB_FIELD_SIGN_SEPARATE (f))) {
-			const unsigned char	c = (sign == -1) ? '-' : '+';
+			const unsigned char	c = (sign == -1) ? COB_MODULE_PTR->rt_minus : COB_MODULE_PTR->rt_plus;
 			p = locate_sign (f);
 			if (*p != c) {
 				*p = c;

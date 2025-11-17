@@ -1329,7 +1329,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	/* if we have not printed any digits set destination to spaces and return */
 
 	if (suppress_zero) {
-		if (pad == '*') {
+		if (pad == COB_MODULE_PTR->rt_aster) {
 			for (dst = f2->data; dst < dst_end; dst++) {
 				if (*dst != dec_symbol) {
 					*dst = COB_MODULE_PTR->rt_aster;
@@ -1345,17 +1345,17 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 		return;
 	}
 
-	if ((neg) && (*sign_position == '+')) {
+	if ((neg) && (*sign_position == COB_MODULE_PTR->rt_plus)) {
 		*sign_position = (is_zero) ? COB_MODULE_PTR->rt_plus : COB_MODULE_PTR->rt_minus;
 		return;
 	}
 
-	if ((neg) && (*sign_position == '-')) {
+	if ((neg) && (*sign_position == COB_MODULE_PTR->rt_minus)) {
 		*sign_position = (is_zero) ? COB_MODULE_PTR->rt_space : COB_MODULE_PTR->rt_minus;
 		return;
 	}
 
-	if ((*sign_position == '-') && (!neg)) {
+	if ((*sign_position == COB_MODULE_PTR->rt_minus) && (!neg)) {
 		*sign_position = COB_MODULE_PTR->rt_space;
 	}
 }
