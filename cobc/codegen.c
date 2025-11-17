@@ -4281,7 +4281,7 @@ output_char (const char *lead, const unsigned char c, const char *trail)
 #endif
 #ifndef	COB_EBCDIC_MACHINE
 	} else if (cb_ebcdic_data) {
-		output ("(unsigned char)0x%02X", ascii_to_ebcdic[c]);
+		output ("(unsigned char)0x%02X", c);
 #endif
 	} else if (c == '\'' || c == '\\') {
 		output ("(unsigned char)'\\%c'", c);
@@ -4820,9 +4820,9 @@ initialize_uniform_char (const struct cb_field *f,
 		case COB_TYPE_NUMERIC_BINARY:
 			return 0;
 		case COB_TYPE_NUMERIC_DISPLAY:
-			return '0';
+			return cb_rt_zero;
 		case COB_TYPE_ALPHANUMERIC:
-			return ' ';
+			return cb_rt_space;
 		default:
 			return -1;
 		}
