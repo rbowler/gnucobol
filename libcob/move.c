@@ -1025,8 +1025,9 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	unsigned char	pad = COB_MODULE_PTR->rt_space;
 	unsigned char	c;
 	unsigned char	float_char = 0x00;
-	const unsigned char dec_symbol = COB_MODULE_PTR->decimal_point == ',' ? COB_MODULE_PTR->rt_comma : COB_MODULE_PTR->rt_dot;
+	const unsigned char dec_symbol = COB_MODULE_PTR->decimal_point == ',' ? ',' : '.';
 	const unsigned char currency = COB_MODULE_PTR->currency_symbol;
+	const unsigned char rt_currency = COB_MODULE_PTR->flag_ebcdic_data ? COB_MODULE_PTR->ascii_to_ebcdic_table[currency] : currency;
 
 #ifndef NDEBUG	/* Sanity check to ensure that the data types of both the fields have the
 		   correct attributes, if not then something is brokend and needs to be fixed  */
@@ -1101,7 +1102,9 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 
 	for (p = COB_FIELD_PIC (f2); p->symbol; ++p) {
 		int n;
+		unsigned char rtc;
 		c = p->symbol;
+		rtc = COB_MODULE_PTR->flag_ebcdic_data ? COB_MODULE_PTR->ascii_to_ebcdic_table[c] : c;
 		if (c == 'P') {
 			continue;
 		}
@@ -1163,12 +1166,12 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 			case '+':
 			case '-':
 				if (c != float_char) {
-					*dst = c;
+					*dst = rtc;
 					sign_position   = dst;
 					dst++;
 					break;
 				} else if (prev_float_char == NULL && !have_decimal_point) {
-					*dst = c;
+					*dst = rtc;
 					prev_float_char = dst;
 					sign_position   = dst;
 					dst++;
@@ -1179,7 +1182,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 						*prev_float_char = COB_MODULE_PTR->rt_space;
 						prev_float_char = dst;
 						sign_position   = dst;
-						*dst = c;
+						*dst = rtc;
 						dst++;
 						src++;
 						break;
@@ -1198,7 +1201,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 			case '.':
 			case ',':
 				if (c == dec_symbol) {
-					*dst = dec_symbol;
+					*dst = rtc;
 					have_decimal_point = 1;
 				} else {
 					if (suppress_zero) {
@@ -1206,7 +1209,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 							*dst = *prev_float_char;
 							*prev_float_char = pad;
 							prev_float_char = dst;
-							if (*dst == COB_MODULE_PTR->rt_minus || *dst == COB_MODULE_PTR->rt_plus) {
+							if (*dst == rtc) {
 								sign_position = dst;
 							}
 						}
@@ -1214,7 +1217,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 							*dst = pad;
 						}
 					} else {
-						*dst = c;
+						*dst = rtc;
 					}
 				}
 				dst++;
@@ -1229,11 +1232,11 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 					*dst = *prev_float_char;
 					*prev_float_char = pad;
 					prev_float_char = dst;
-					if (*dst != currency) {
+					if (*dst != rt_currency) {
 						sign_position = dst;
 					}
 				} else {
-					*dst = c;
+					*dst = rtc;
 				}
 				dst++;
 				break;
@@ -1243,13 +1246,13 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 					*dst = *prev_float_char;
 					*prev_float_char = pad;
 					prev_float_char = dst;
-					if (*dst != currency) {
+					if (*dst != rt_currency) {
 						sign_position = dst;
 					}
 				} else if (have_check_protect) {
 					*dst = pad;
 				} else {
-					*dst = COB_MODULE_PTR->rt_space;
+					*dst = rtc;
 				}
 				dst++;
 				break;
@@ -1277,16 +1280,16 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 				if (c != currency) {
 					/* should never happen, consider remove [also the reason for not translating that] */
 					cob_runtime_error ("optimized_move_display_to_edited: invalid PIC character %c", c);
-					*dst = '?';    /* Invalid PIC */
+					*dst = COB_MODULE_PTR->rt_query;    /* Invalid PIC */
 					break;
 				} else
 				/* LCOV_EXCL_STOP */
 				if (c != float_char) {
-						*dst = c;
+						*dst = rtc;
 						dst++;
 						break;
 				} else if (prev_float_char == NULL) {
-						*dst = c;
+						*dst = rtc;
 						prev_float_char = dst;
 						dst++;
 						break;
@@ -1295,7 +1298,7 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 					if ((src_num == 0) && (suppress_zero) && (!have_decimal_point)) {
 						*prev_float_char = COB_MODULE_PTR->rt_space;
 						prev_float_char = dst;
-						*dst = c;
+						*dst = rtc;
 						dst++;
 						src++;
 						break;
@@ -1343,17 +1346,17 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	}
 
 	if ((neg) && (*sign_position == '+')) {
-		*sign_position = (is_zero) ? '+' : '-';
+		*sign_position = (is_zero) ? COB_MODULE_PTR->rt_plus : COB_MODULE_PTR->rt_minus;
 		return;
 	}
 
 	if ((neg) && (*sign_position == '-')) {
-		*sign_position = (is_zero) ? ' ' : '-';
+		*sign_position = (is_zero) ? COB_MODULE_PTR->rt_space : COB_MODULE_PTR->rt_minus;
 		return;
 	}
 
 	if ((*sign_position == '-') && (!neg)) {
-		*sign_position = ' ';
+		*sign_position = COB_MODULE_PTR->rt_space;
 	}
 }
 
