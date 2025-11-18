@@ -3900,7 +3900,7 @@ cob_intr_bit_to_char (cob_field *srcfield)
 cob_field *
 cob_intr_hex_of (cob_field *srcfield)
 {
-	const char hex_val[] = "0123456789ABCDEF";
+	const char *hex_val;
 
 	/* FIXME later: srcfield may be of category national - or later bit... */
 	const size_t		size = srcfield->size * 2;
@@ -3908,6 +3908,16 @@ cob_intr_hex_of (cob_field *srcfield)
 
 	COB_FIELD_INIT (size, NULL, &const_alpha_attr);
 	make_field_entry (&field);
+
+#ifdef	COB_EBCDIC_MACHINE
+	hex_val = "0123456789ABCDEF";
+#else
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		hex_val = "\xF0\xF1\xF2\xF3\xF4\xF5\xF6\xF7\xF8\xF9\xC1\xC2\xC3\xC4\xC5\xC6";
+	} else {
+		hex_val = "0123456789ABCDEF";
+	}
+#endif
 
 	{
 		register unsigned char *ret_pos = curr_field->data;
