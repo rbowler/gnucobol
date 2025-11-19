@@ -1743,6 +1743,29 @@ cob_get_sign_ebcdic (unsigned char *p)
 		return 1;
 	}
 #else
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		unsigned char sign_nibble = *p & 0xF0;
+		switch (sign_nibble) {
+		/* positive */
+		case 0xC0:
+		/* positive, non-preferred */
+		case 0xA0:
+		case 0xE0:
+			return 1;
+		/* negative */
+		case 0xD0:
+		/* negative, non-preferred */
+		case 0xB0:
+			return -1;
+		/* unsigned */
+		case 0xF0:
+			return 0;
+		default:
+			/* What to do here outside of sign nibbles? */
+			return 1;
+		}
+	}
+
 	switch (*p) {
 	case '{':
 		*p = (unsigned char)'0';
@@ -1822,6 +1845,12 @@ cob_get_sign_ebcdic (unsigned char *p)
 static void
 cob_put_sign_ebcdic (unsigned char *p, const int sign)
 {
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		*p &= (unsigned char)0x0F;
+		*p |= sign == -1 ? (unsigned char)0xD0 : (unsigned char)0xC0;
+		return;
+	}
+
 	if (sign == -1) {
 		switch (*p) {
 		case '0':

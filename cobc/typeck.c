@@ -12284,6 +12284,12 @@ cob_put_sign_ascii (unsigned char *p)
 static void
 cob_put_sign_ebcdic (unsigned char *p, const int sign)
 {
+	if (cb_ebcdic_data) {
+		*p &= (unsigned char)0x0F;
+		*p |= sign == -1 ? (unsigned char)0xD0 : (unsigned char)0xC0;
+		return;
+	}
+
 	if (sign == -1) {
 		switch (*p) {
 		case '0':
