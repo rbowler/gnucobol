@@ -12508,12 +12508,12 @@ cb_build_move_literal (cb_tree src, cb_tree dst)
 		}
 		if (i == f->size) {
 			cobc_parse_free (buff);
-			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12511*/",
+			return CB_BUILD_FUNCALL_3 ("memset/*typeck.c:12516*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_int_hex (bbyte),
 					   CB_BUILD_CAST_LENGTH (dst));
 		}
-		return CB_BUILD_FUNCALL_3 ("memcpy/*typeck.c:12516*/",
+		return CB_BUILD_FUNCALL_3 ("memcpy/*typeck.c:12521*/",
 					   CB_BUILD_CAST_ADDRESS (dst),
 					   cb_build_string (buff, (size_t)f->size),
 					   CB_BUILD_CAST_LENGTH (dst));
