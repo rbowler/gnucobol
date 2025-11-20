@@ -11474,7 +11474,7 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_aster = '%c';", cb_rt_aster);
 		output_line ("module__->rt_slash = '%c';", cb_rt_slash);
 		output_line ("module__->rt_quote = '%c';", cb_rt_quote);
-		output_line ("module__->rt_apost = '%c';", cb_rt_apost);
+		output_line ("module__->rt_apost = '\\%c';", cb_rt_apost);
 		output_line ("module__->rt_zero = '%c';", cb_rt_zero);
 		output_line ("module__->rt_nine = '%c';", cb_rt_nine);
 		output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
@@ -11495,7 +11495,7 @@ output_module_init_function (struct cb_program *prog)
 	output_line ("module__->rt_aster = '%c';", cb_rt_aster);
 	output_line ("module__->rt_slash = '%c';", cb_rt_slash);
 	output_line ("module__->rt_quote = '%c';", cb_rt_quote);
-	output_line ("module__->rt_apost = '%c';", cb_rt_apost);
+	output_line ("module__->rt_apost = '\\%c';", cb_rt_apost);
 	output_line ("module__->rt_zero = '%c';", cb_rt_zero);
 	output_line ("module__->rt_nine = '%c';", cb_rt_nine);
 	output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
