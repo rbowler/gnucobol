@@ -2595,9 +2595,9 @@ output_quote (void)
 		output ("static cob_field cob_all_quote\t= ");
 		output ("{1, ");
 		if (cb_flag_apostrophe) {
-			output ("(cob_u8_ptr)\"'\", ");
+			output ("(cob_u8_ptr)\"\\x%02X\", ", cb_rt_apost);
 		} else {
-			output ("(cob_u8_ptr)\"\\\"\", ");
+			output ("(cob_u8_ptr)\"\\x%02X\", ", cb_rt_quote);
 		}
 		output ("&cob_all_attr};");
 		output_newline ();
@@ -2610,7 +2610,7 @@ output_space (void)
 	if (gen_figurative & CB_NEED_SPACE) {
 		output ("static cob_field cob_all_space\t= ");
 		output ("{1, ");
-		output ("(cob_u8_ptr)\" \", ");
+		output ("(cob_u8_ptr)\"\\x%02X\", ", cb_rt_space);
 		output ("&cob_all_attr};");
 		output_newline ();
 	}
@@ -2622,7 +2622,7 @@ output_zero (void)
 	if (gen_figurative & CB_NEED_ZERO) {
 		output ("static cob_field cob_all_zero\t= ");
 		output ("{1, ");
-		output ("(cob_u8_ptr)\"0\", ");
+		output ("(cob_u8_ptr)\"\\x%02X\", ", cb_rt_zero);
 		output ("&cob_all_attr};");
 		output_newline ();
 	}
