@@ -3908,14 +3908,14 @@ cob_real_get_sign (cob_field *f, const int adjust_ebcdic)
 
 		/* Get sign */
 		if (unlikely (COB_FIELD_SIGN_SEPARATE (f))) {
-			return (*p == '-') ? -1 : 1;
+			return (*p == COB_MODULE_PTR->rt_minus) ? -1 : 1;
 		}
 		if (IS_VALID_DIGIT_DATA (*p)) {
 			return 1;
 		}
-		if (*p == ' ') {
+		if (*p == COB_MODULE_PTR->rt_space) {
 #if	0	/* RXWRXW - Space sign */
-			*p = '0';
+			*p = COB_MODULE_PTR->rt_zero;
 #endif
 			return 1;
 		}
