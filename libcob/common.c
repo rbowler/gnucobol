@@ -306,6 +306,16 @@ const char *COB_ZEROES_ALPHABETIC = ZERO_256;
 #undef ZERO_64
 #undef ZERO_256
 
+#ifndef COB_EBCDIC_MACHINE
+#define XF0_16  	"\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0\xF0"
+#define XF0_64  	XF0_16 XF0_16 XF0_16 XF0_16
+#define XF0_256 	XF0_64 XF0_64 XF0_64 XF0_64
+const char *COB_ZEROES_EBCDIC = XF0_256;
+#undef XF0_16
+#undef XF0_64
+#undef XF0_256
+#endif /* COB_EBCDIC_MACHINE */
+
 /* note: ancient compilers may only support a length of 509-1023 chars,
    as soon as we actually see one, we can memset this var (for those) 
    in the init function */
@@ -318,6 +328,16 @@ const char *COB_SPACES_ALPHABETIC = SPACE_1024;
 #undef SPACE_64
 #undef SPACE_256
 #undef SPACE_1024
+
+#ifndef COB_EBCDIC_MACHINE
+#define X40_16  	"\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40\x40"
+#define X40_64  	X40_16 X40_16 X40_16 X40_16
+#define X40_256 	X40_64 X40_64 X40_64 X40_64
+const char *COB_SPACES_EBCDIC = X40_256;
+#undef X40_16
+#undef X40_64
+#undef X40_256
+#endif /* COB_EBCDIC_MACHINE */
 
 struct cob_alloc_cache {
 	struct cob_alloc_cache	*next;		/* Pointer to next */

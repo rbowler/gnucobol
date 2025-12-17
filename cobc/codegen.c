@@ -11461,6 +11461,8 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_CR[1] = 0x%2.2X;", cb_rt_CR[1]);
 		output_line ("module__->rt_DB[0] = 0x%2.2X;", cb_rt_DB[0]);
 		output_line ("module__->rt_DB[1] = 0x%2.2X;", cb_rt_DB[1]);
+		output_line ("COB_ZEROES_ALPHABETIC = COB_ZEROES_EBCDIC;");
+		output_line ("COB_SPACES_ALPHABETIC = COB_SPACES_EBCDIC;");
 	} else {
 		output_line ("module__->flag_ebcdic_data = 0;");
 		output_line ("module__->ebcdic_to_ascii_table = NULL;");
