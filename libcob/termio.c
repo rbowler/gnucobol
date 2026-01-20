@@ -1044,6 +1044,7 @@ cob_accept (cob_field *f)
 {
 	unsigned char	*p;
 	size_t		size;
+	size_t		i;
 	int		ipchr;
 	cob_field	temp;
 
@@ -1104,6 +1105,11 @@ cob_accept (cob_field *f)
 	if (COB_FIELD_TYPE(f) == COB_TYPE_NUMERIC_DISPLAY) {
 		if (temp.size > f->size) {
 			temp.size = f->size;
+		}
+	}
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; i < temp.size; i++) {
+			temp.data[i] = COB_MODULE_PTR->ascii_to_ebcdic_table[temp.data[i]];
 		}
 	}
 	cob_move (&temp, f);
