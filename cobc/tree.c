@@ -5908,6 +5908,20 @@ get_warnopt_for_constant (cb_tree x, cb_tree y)
 	return cb_warn_constant_numlit_expr;
 }
 
+static cob_s64_t
+cb_literal_to_s64 (struct cb_literal *l)
+{
+	cob_s64_t val = 0;
+	int i;
+	for (i = 0; i < l->size; i++) {
+		val = val * 10 + (l->data[i] & 0x0F);
+	}
+	if (l->sign == -1) {
+		val = -val;
+	}
+	return val;
+}
+
 cb_tree
 cb_build_binary_op (cb_tree x, const enum cb_binary_op_op op, cb_tree y)
 {
@@ -5972,14 +5986,8 @@ cb_build_binary_op (cb_tree x, const enum cb_binary_op_op op, cb_tree y)
 			 && yl->size >= (unsigned int)yl->scale
 			 && xl->all == 0
 			 && yl->all == 0) {
-				xval = atoll((const char*)xl->data);
-				if (xl->sign == -1) {
-					xval = -xval;
-				}
-				yval = atoll((const char*)yl->data);
-				if (yl->sign == -1) {
-					yval = -yval;
-				}
+				xval = cb_literal_to_s64(xl);
+				yval = cb_literal_to_s64(yl);
 				xscale = xl->scale;
 				cb_set_dmax (xscale);
 				yscale = yl->scale;
@@ -6069,7 +6077,7 @@ cb_build_binary_op (cb_tree x, const enum cb_binary_op_op op, cb_tree y)
 		 && CB_NUMERIC_LITERAL_P (y)) {
 			yl = CB_LITERAL (y);
 			if (yl->scale == 0) {
-				yval = atoll((const char*)yl->data);
+				yval = cb_literal_to_s64(yl);
 				if ((op == '+' || op == '-')
 		 		 && !rel_bin_op
 				 && yval == 0) {		/* + or - ZERO does nothing */
@@ -6131,10 +6139,8 @@ cb_build_binary_op (cb_tree x, const enum cb_binary_op_op op, cb_tree y)
 			yl = CB_LITERAL(y);
 			if (xl->scale == 0
 			&& yl->scale == 0) {
-				xval = atoll((const char*)xl->data);
-				if(xl->sign == -1) xval = -xval;
-				yval = atoll((const char*)yl->data);
-				if(yl->sign == -1) yval = -yval;
+				xval = cb_literal_to_s64(xl);
+				yval = cb_literal_to_s64(yl);
 				if (op == 'a')
 					sprintf (result, CB_FMT_LLD, xval & yval);
 				else if (op == 'o')
@@ -6233,8 +6239,8 @@ cb_build_binary_op (cb_tree x, const enum cb_binary_op_op op, cb_tree y)
 			 && xl->all == 0
 			 && yl->all == 0) {
 				copy_file_line (e, y, x);
-				xval = atoll((const char*)xl->data);
-				yval = atoll((const char*)yl->data);
+				xval = cb_literal_to_s64(xl);
+				yval = cb_literal_to_s64(yl);
 				switch (op) {
 				case '=':
 					warn_type = 51 + (xval * 2 + yval) % 5000;
