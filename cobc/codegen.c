@@ -4320,9 +4320,9 @@ output_funcall_typed (struct cb_funcall *p, const char type)
 		output ("(int)(*(");
 		output_data (p->argv[0]);
 		if (p->argv[1] == cb_space) {
-			output (") - ' ')");
+			output_char (") - ", cb_rt_space, ")");
 		} else if (p->argv[1] == cb_zero) {
-			output (") - '0')");
+			output_char (") - ", cb_rt_zero, ")");
 		} else if (p->argv[1] == cb_low) {
 			output (") - 0x%02x)", current_prog->low_value);
 		} else if (p->argv[1] == cb_high) {
