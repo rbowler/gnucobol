@@ -507,7 +507,8 @@ main (int argc, char **argv)
 	          so are only still running if we have a a valid, _likely_ COBOL
 	          function to execute */
 	if (exec_parm_wanted) {
-		cob_stop_run (unifunc.funcint(&exec_parm));
+		int (*call_func)(void *) = (int (*)(void *))unifunc.funcint;
+		cob_stop_run (call_func(&exec_parm));
 	} else {
 		cob_stop_run (unifunc.funcint());
 	}
