@@ -4140,23 +4140,23 @@ cob_intr_trim (const int offset, const int length,
 	make_field_entry (srcfield);
 
 	for (i = 0; i < srcfield->size; ++i) {
-		if (srcfield->data[i] != ' ') {
+		if (srcfield->data[i] != COB_MODULE_PTR->rt_space) {
 			break;
 		}
 	}
 	if (i == srcfield->size) {
 		curr_field->size = 0;
-		curr_field->data[0] = ' ';
+		curr_field->data[0] = COB_MODULE_PTR->rt_space;
 		return curr_field;
 	}
 
 	begin = srcfield->data;
 	if (direction != 2) {
-		for (; *begin == ' '; ++begin) ;
+		for (; *begin == COB_MODULE_PTR->rt_space; ++begin) ;
 	}
 	end = srcfield->data + srcfield->size - 1;
 	if (direction != 1) {
-		for (; *end == ' '; end--) ;
+		for (; *end == COB_MODULE_PTR->rt_space; end--) ;
 	}
 
 	size = 0;
