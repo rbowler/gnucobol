@@ -3952,24 +3952,24 @@ cob_intr_hex_to_char (cob_field *srcfield)
 	p = srcfield->data;
 	while (p < end) {
 		unsigned char dst;
-		if (*p >= '0' && *p <= '9') {
+		if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 			dst = COB_D2I (*p);
-		} else if (*p >= 'A' && *p <= 'F') {
-			dst = *p - 'A' + 10;
-		} else if (*p >= 'a' && *p <= 'f') {
-			dst = *p - 'a' + 10;
+		} else if (*p >= COB_MODULE_PTR->rt_A && *p <= COB_MODULE_PTR->rt_F) {
+			dst = *p - COB_MODULE_PTR->rt_A + 10;
+		} else if (*p >= COB_MODULE_PTR->rt_a && *p <= COB_MODULE_PTR->rt_f) {
+			dst = *p - COB_MODULE_PTR->rt_a + 10;
 		} else {
 			dst = 0;
 			cob_set_exception (COB_EC_ARGUMENT_FUNCTION);
 		}
 		p++;
 		dst *= 16;
-		if (*p >= '0' && *p <= '9') {
+		if (*p >= COB_MODULE_PTR->rt_zero && *p <= COB_MODULE_PTR->rt_nine) {
 			dst = dst + COB_D2I (*p);
-		} else if (*p >= 'A' && *p <= 'F') {
-			dst = dst + *p - 'A' + 10;
-		} else if (*p >= 'a' && *p <= 'f') {
-			dst = dst + *p - 'a' + 10;
+		} else if (*p >= COB_MODULE_PTR->rt_A && *p <= COB_MODULE_PTR->rt_F) {
+			dst = *p - COB_MODULE_PTR->rt_A + 10;
+		} else if (*p >= COB_MODULE_PTR->rt_a && *p <= COB_MODULE_PTR->rt_f) {
+			dst = *p - COB_MODULE_PTR->rt_a + 10;
 		} else {
 			cob_set_exception (COB_EC_ARGUMENT_FUNCTION);
 		}

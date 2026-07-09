@@ -1358,6 +1358,10 @@ typedef struct __cob_module {
 	unsigned char		rt_nine;		/* NINE */
 	unsigned char		rt_CR[2];		/* CR */
 	unsigned char		rt_DB[2];		/* DB */
+	unsigned char		rt_A;			/* UPPERCASE LETTER A */
+	unsigned char		rt_F;			/* UPPERCASE LETTER F */
+	unsigned char		rt_a;			/* LOWERCASE LETTER a */
+	unsigned char		rt_f;			/* LOWERCASE LETTER f */
 
 } cob_module;
 

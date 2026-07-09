@@ -280,6 +280,10 @@ unsigned char		cb_rt_zero = '0';
 unsigned char		cb_rt_nine = '9';
 unsigned char		cb_rt_CR[2] = { 'C', 'R' };
 unsigned char		cb_rt_DB[2] = { 'D', 'B' };
+unsigned char		cb_rt_A = 'A';
+unsigned char		cb_rt_F = 'F';
+unsigned char		cb_rt_a = 'a';
+unsigned char		cb_rt_f = 'f';
 
 /* set by option -fttitle=<title> */
 char		*cb_listing_with_title = NULL;
@@ -9711,6 +9715,10 @@ main (int argc, char **argv)
 		cb_rt_nine = 0xF9;
 		cb_rt_CR[0] = 0xC3; cb_rt_CR[1] = 0xD9;
 		cb_rt_DB[0] = 0xC4; cb_rt_DB[1] = 0xC2;
+		cb_rt_A = 0xC1;
+		cb_rt_F = 0xC6;
+		cb_rt_a = 0x81;
+		cb_rt_f = 0x86;
 	}
 #endif
 
