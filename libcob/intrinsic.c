@@ -3847,14 +3847,14 @@ cob_intr_bit_of (cob_field *srcfield)
 	make_field_entry (&field);
 
 	for (i = j = 0; i < srcfield->size; ++i) {
-		curr_field->data[j++] = *byte & 0x80 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x40 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x20 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x10 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x08 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x04 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x02 ? '1' : '0';
-		curr_field->data[j++] = *byte & 0x01 ? '1' : '0';
+		curr_field->data[j++] = *byte & 0x80 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x40 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x20 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x10 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x08 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x04 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x02 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
+		curr_field->data[j++] = *byte & 0x01 ? COB_MODULE_PTR->rt_one : COB_MODULE_PTR->rt_zero;
 		byte++;
 	}
 	return curr_field;
@@ -3862,8 +3862,8 @@ cob_intr_bit_of (cob_field *srcfield)
 
 static int
 has_bit_checked (const unsigned char byte) {
-	if (byte == '0') return 0;
-	if (byte != '1') {
+	if (byte == COB_MODULE_PTR->rt_zero) return 0;
+	if (byte != COB_MODULE_PTR->rt_one) {
 		cob_set_exception (COB_EC_ARGUMENT_FUNCTION);
 	}
 	return 1;

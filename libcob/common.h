@@ -1355,6 +1355,7 @@ typedef struct __cob_module {
 	unsigned char		rt_quote;		/* QUOTE */
 	unsigned char		rt_apost;		/* APOSTROPHE */
 	unsigned char		rt_zero;		/* ZERO */
+	unsigned char		rt_one;			/* ONE */
 	unsigned char		rt_nine;		/* NINE */
 	unsigned char		rt_CR[2];		/* CR */
 	unsigned char		rt_DB[2];		/* DB */

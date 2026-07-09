@@ -521,6 +521,7 @@ extern unsigned char		cb_rt_slash;
 extern unsigned char		cb_rt_quote;
 extern unsigned char		cb_rt_apost;
 extern unsigned char		cb_rt_zero;
+extern unsigned char		cb_rt_one;
 extern unsigned char		cb_rt_nine;
 extern unsigned char		cb_rt_CR[2];
 extern unsigned char		cb_rt_DB[2];
