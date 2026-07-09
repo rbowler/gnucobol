@@ -5478,6 +5478,14 @@ display_literal (char *disp, struct cb_literal *l, int offset, int scale)
 	} else {
 		snprintf (disp, COB_MAX_DIGITS + 1, "%s", (char *)(l->data + offset));
 	}
+#ifndef COB_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		cob_u32_t i;
+		for (i = 0; i < COB_MAX_DIGITS && disp[i]; i++) {
+			disp[i] = ebcdic_to_ascii[(unsigned char)disp[i]];
+		}
+	}
+#endif
 	return disp;
 }
 
