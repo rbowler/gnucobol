@@ -657,6 +657,25 @@ cob_alloc_field (cob_decimal *d)
 	}
 }
 
+/* Copy characters with conversion to program codepage */
+static void
+cob_copy_chars_to_program (unsigned char *dst, char *src, size_t size)
+{
+#ifndef COB_EBCDIC_MACHINE
+	size_t		i;
+
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; i < size; i++) {
+			dst[i] = COB_MODULE_PTR->ascii_to_ebcdic_table[(unsigned char)src[i]];
+		}
+	} else {
+		memcpy (dst, src, size);
+	}
+#else
+	memcpy (dst, src, size);
+#endif
+}
+
 /* Common function for intrinsics MOD and REM */
 
 static cob_field *
@@ -4302,7 +4321,6 @@ cob_intr_when_compiled (const int offset, const int length, cob_field *f)
 cob_field *
 cob_intr_current_date (const int offset, const int length)
 {
-	size_t		i;
 	cob_field	field;
 	struct cob_time time;
 	char		buff[22] = { '\0' };
@@ -4322,13 +4340,7 @@ cob_intr_current_date (const int offset, const int length)
 
 	add_offset_time (0, &time.utc_offset, 16, buff);
 
-	if (COB_MODULE_PTR->flag_ebcdic_data) {
-		for (i = 0; i < 21; i++) {
-			curr_field->data[i] = COB_MODULE_PTR->ascii_to_ebcdic_table[(unsigned char)buff[i]];
-		}
-	} else {
-		memcpy (curr_field->data, buff, (size_t)21);
-	}
+	cob_copy_chars_to_program (curr_field->data, buff, (size_t)21);
 	if (offset != 0) {
 		calc_ref_mod (curr_field, offset, length);
 	}
@@ -4477,7 +4489,7 @@ cob_intr_date_of_integer (cob_field *srcdays)
 	date_of_integer (days, &year, &month, &days);
 
 	snprintf (buff, (size_t)15, "%4.4d%2.2d%2.2d", year, month, days);
-	memcpy (curr_field->data, buff, (size_t)8);
+	cob_copy_chars_to_program (curr_field->data, buff, (size_t)8);
 	return curr_field;
 }
 
@@ -4509,7 +4521,7 @@ cob_intr_day_of_integer (cob_field *srcdays)
 		(cob_u16_t) baseyear,
 		(cob_u16_t) days);
 
-	memcpy (curr_field->data, buff, (size_t)7);
+	cob_copy_chars_to_program (curr_field->data, buff, (size_t)7);
 	return curr_field;
 }
 
@@ -6170,7 +6182,7 @@ cob_intr_mon_decimal_point (void)
 	}
 	make_field_entry (&field);
 	if (size) {
-		memcpy (curr_field->data, p->mon_decimal_point, size);
+		cob_copy_chars_to_program (curr_field->data, p->mon_decimal_point, size);
 	} else {
 		curr_field->size = 0;
 		curr_field->data[0] = 0;
@@ -6205,7 +6217,7 @@ cob_intr_num_decimal_point (void)
 	}
 	make_field_entry (&field);
 	if (size) {
-		memcpy (curr_field->data, p->decimal_point, size);
+		cob_copy_chars_to_program (curr_field->data, p->decimal_point, size);
 	} else {
 		curr_field->size = 0;
 		curr_field->data[0] = 0;
@@ -6240,7 +6252,7 @@ cob_intr_mon_thousands_sep (void)
 	}
 	make_field_entry (&field);
 	if (size) {
-		memcpy (curr_field->data, p->mon_thousands_sep, size);
+		cob_copy_chars_to_program (curr_field->data, p->mon_thousands_sep, size);
 	} else {
 		curr_field->size = 0;
 		curr_field->data[0] = 0;
@@ -6275,7 +6287,7 @@ cob_intr_num_thousands_sep (void)
 	}
 	make_field_entry (&field);
 	if (size) {
-		memcpy (curr_field->data, p->thousands_sep, size);
+		cob_copy_chars_to_program (curr_field->data, p->thousands_sep, size);
 	} else {
 		curr_field->size = 0;
 		curr_field->data[0] = 0;
@@ -6310,7 +6322,7 @@ cob_intr_currency_symbol (void)
 	}
 	make_field_entry (&field);
 	if (size) {
-		memcpy (curr_field->data, p->currency_symbol, size);
+		cob_copy_chars_to_program (curr_field->data, p->currency_symbol, size);
 	} else {
 		curr_field->size = 0;
 		curr_field->data[0] = 0;
