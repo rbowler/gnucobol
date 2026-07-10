@@ -533,6 +533,45 @@ comp_field (const void *m1, const void *m2)
 	return cob_cmp (f1, f2);
 }
 
+/* Platform-specific lower/upper case conversion functions */
+#if COB_EBCDIC_MACHINE
+static inline int ebcdic_aware_tolower (int c) { return tolower(c); }
+static inline int ebcdic_aware_toupper (int c) { return toupper(c); }
+#else
+static int
+ebcdic_aware_tolower (int c) {
+	int zone, digit;
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		/* EBCDIC upper-case letters are C1-C9, D1-D9, E2-E9.
+		   The lower-case equivalent is formed by clearing the 0x40 bit. */
+		zone = c & 0xF0; digit = c & 0x0F;
+		if ((zone & 0xEF) == 0xC0 && digit > 0 && digit < 10) return c & 0xBF;
+		if (zone == 0xE0 && digit > 1 && digit < 10) return c & 0xBF;
+		/* Return unchanged if not an upper-case letter */
+		return c;
+	} else {
+		/* Use platform provided tolower */
+		return tolower(c);
+	}
+}
+static int
+ebcdic_aware_toupper (int c) {
+	int zone, digit;
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		/* EBCDIC lower-case letters are 81-89, 91-99, A2-A9.
+		   The upper-case equivalent is formed by setting the 0x40 bit. */
+		zone = c & 0xF0; digit = c & 0x0F;
+		if ((zone & 0xEF) == 0x80 && digit > 0 && digit < 10) return c | 0x40;
+		if (zone == 0xA0 && digit > 1 && digit < 10) return c | 0x40;
+		/* Return unchanged if not a lower-case letter */
+		return c;
+	} else {
+		/* Use platform provided toupper */
+		return toupper(c);
+	}
+}
+#endif
+
 /* Reference modification */
 static void
 calc_ref_mod (cob_field *f, const int offset, const int length)
@@ -3811,7 +3850,7 @@ cob_intr_upper_case (const int offset, const int length, cob_field *srcfield)
 
 	size = srcfield->size;
 	for (i = 0; i < size; ++i) {
-		curr_field->data[i] = (cob_u8_t)toupper ((unsigned char)srcfield->data[i]);
+		curr_field->data[i] = (cob_u8_t)ebcdic_aware_toupper ((unsigned char)srcfield->data[i]);
 	}
 	if (unlikely (offset > 0)) {
 		calc_ref_mod (curr_field, offset, length);
@@ -3828,7 +3867,7 @@ cob_intr_lower_case (const int offset, const int length, cob_field *srcfield)
 
 	size = srcfield->size;
 	for (i = 0; i < size; ++i) {
-		curr_field->data[i] = (cob_u8_t)tolower (srcfield->data[i]);
+		curr_field->data[i] = (cob_u8_t)ebcdic_aware_tolower (srcfield->data[i]);
 	}
 	if (unlikely (offset > 0)) {
 		calc_ref_mod (curr_field, offset, length);
