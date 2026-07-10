@@ -1922,7 +1922,7 @@ cb_get_long_long (const cb_tree x)
 
 	/* Skip leading zeroes */
 	for (i = 0; i < l->size; i++) {
-		if (l->data[i] != '0') {
+		if (l->data[i] != cb_rt_zero) {
 			break;
 		}
 	}
@@ -1976,7 +1976,7 @@ cb_get_u_long_long (const cb_tree x)
 
 	/* Skip leading zeroes */
 	for (i = 0; i < l->size; i++) {
-		if (l->data[i] != '0') {
+		if (l->data[i] != cb_rt_zero) {
 			break;
 		}
 	}
