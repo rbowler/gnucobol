@@ -572,6 +572,30 @@ ebcdic_aware_toupper (int c) {
 }
 #endif
 
+/* Convert character from program data codepage to compiler codepage */
+static inline unsigned char
+char_from_data (unsigned char c)
+{
+#ifndef COB_EBCDIC_MACHINE
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		return COB_MODULE_PTR->ebcdic_to_ascii_table[c];
+	}
+#endif
+	return c;
+}
+
+/* Convert character from compiler codepage to program data codepage */
+static inline unsigned char
+data_from_char (unsigned char c)
+{
+#ifndef COB_EBCDIC_MACHINE
+	if (COB_MODULE_PTR->flag_ebcdic_data) {
+		return COB_MODULE_PTR->ascii_to_ebcdic_table[c];
+	}
+#endif
+	return c;
+}
+
 /* Reference modification */
 static void
 calc_ref_mod (cob_field *f, const int offset, const int length)
@@ -803,7 +827,8 @@ cob_check_numval_f (const cob_field *srcfield)
 
 	/* Check leading positions */
 	for (n = 0; n < fsize; ++n, ++p) {
-		switch (*p) {
+		const unsigned char cp = char_from_data (*p);
+		switch (cp) {
 		case '0':
 		case '1':
 		case '2':
@@ -827,7 +852,7 @@ cob_check_numval_f (const cob_field *srcfield)
 			continue;
 		case ',':
 		case '.':
-			if (*p != dec_pt) {
+			if (cp != dec_pt) {
 				return n + 1;
 			}
 			break_needed = 1;
@@ -845,7 +870,8 @@ cob_check_numval_f (const cob_field *srcfield)
 	}
 
 	for (; n < fsize; ++n, ++p) {
-		switch (*p) {
+		const unsigned char cp = char_from_data (*p);
+		switch (cp) {
 		case '0':
 		case '1':
 		case '2':
@@ -869,7 +895,7 @@ cob_check_numval_f (const cob_field *srcfield)
 			if (decimal_seen || space_seen || e_seen) {
 				return n + 1;
 			}
-			if (*p == dec_pt) {
+			if (cp == dec_pt) {
 				decimal_seen = 1;
 				continue;
 			}
@@ -1494,8 +1520,11 @@ space_left (unsigned char * p, unsigned char *p_end)
 static COB_INLINE COB_A_INLINE int
 at_cr_or_db (const unsigned char *p)
 {
-	return (toupper (p[0]) == 'C' && toupper (p[1]) == 'R')
-	    || (toupper (p[0]) == 'D' && toupper (p[1]) == 'B');
+	unsigned char up[2];
+	up[0] = ebcdic_aware_toupper (p[0]);
+	up[1] = ebcdic_aware_toupper (p[1]);
+	return memcmp (up, COB_MODULE_PTR->rt_CR, 2) == 0
+	    || memcmp (up, COB_MODULE_PTR->rt_DB, 2) == 0;
 }
 
 /* get first and last position of possible numeric data */
@@ -1514,13 +1543,13 @@ calculate_start_end_for_numval (cob_field *srcfield,
 	/* skip trailing space and low-value */
 	p_end = p + srcfield->size - 1;
 	while (p != p_end) {
-		if (*p_end != ' ' && *p_end != 0) break;
+		if (*p_end != COB_MODULE_PTR->rt_space && *p_end != 0) break;
 		p_end--;
 	}
 
 	/* skip leading space and zero (but not low-value) */
 	while (p != p_end) {
-		if (*p != ' ' && *p != '0') break;
+		if (*p != COB_MODULE_PTR->rt_space && *p != COB_MODULE_PTR->rt_zero) break;
 		p++;
 	}
 
@@ -1595,6 +1624,8 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 	}
 
 	for ( /* start value for p set above */ ; p <= p_end ; ++p) {
+		const unsigned char cp = char_from_data (*p);
+
 		if (space_left (p, p_end) >= 2
 		 && at_cr_or_db (p)) {
 			/* CR / DB always wins in GnuCOBOL, sets the sign and ends */
@@ -1605,7 +1636,7 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 				/* post validation - only spaces allowed */
 				p += 2;
 				while (p <= p_end) {
-					if (*p != ' ') {
+					if (*p != COB_MODULE_PTR->rt_space) {
 						exception = 1;
 						break;
 					}
@@ -1630,7 +1661,7 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 				p += (currency->size - 1);
 				continue;
 			}
-		} else if (type == NUMVAL_C && *p == cur_symb) {
+		} else if (type == NUMVAL_C && cp == cur_symb) {
 			if (currency_seen) {
 				exception = 1;
 			} else {
@@ -1639,7 +1670,7 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 			continue;
 		}
 
-		switch (*p) {
+		switch (cp) {
 		case '0':
 			if (digits == 0 && !decimal_seen) {
 				/* no data yet, so just skip */
@@ -1658,7 +1689,7 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 			if (decimal_seen) {
 				decimal_digits++;
 			}
-			final_buff[digits++] = *p;
+			final_buff[digits++] = cp;
 			if (digits > COB_MAX_DIGITS) {
 				exception = 1;
 				goto game_over;
@@ -1683,13 +1714,13 @@ numval (cob_field *srcfield, cob_field *currency, const enum numval_type type)
 			   because of performance reasons */
 			continue;
 		default:
-			if (*p == dec_pt) {
+			if (cp == dec_pt) {
 				if (decimal_seen) {
 					exception = 1;
 				}
 				decimal_seen = 1;
 			} else
-			if (*p == num_sep && type == NUMVAL_C) {
+			if (cp == num_sep && type == NUMVAL_C) {
 				/* note: we don't check for bad numeric seperator places
 				   because of performance reasons */
 			} else {
@@ -3387,7 +3418,8 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 		endp = NULL;
 		p = currency->data;
 		for (pos = 0; pos < currency_max_pos; pos++, p++) {
-			switch (*p) {
+			const unsigned char cp = char_from_data (*p);
+			switch (cp) {
 			case '0':
 			case '1':
 			case '2':
@@ -3408,10 +3440,10 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 				break;
 			default:
 				if (pos < currency_max_pos - 1) {
-					if (!memcmp (p, "CR", (size_t)2)) {
+					if (!memcmp (p, COB_MODULE_PTR->rt_CR, (size_t)2)) {
 						return 1;
 					}
-					if (!memcmp (p, "DB", (size_t)2)) {
+					if (!memcmp (p, COB_MODULE_PTR->rt_DB, (size_t)2)) {
 						return 1;
 					}
 				}
@@ -3432,7 +3464,7 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 			currcy_size = 0;
 		}
 	} else if (chkcurr) {
-		cur_symb = COB_MODULE_PTR->currency_symbol;
+		cur_symb = data_from_char (COB_MODULE_PTR->currency_symbol);
 		begp = &cur_symb;
 		currcy_size = 1;
 	}
@@ -3442,7 +3474,8 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 	break_needed = 0;
 	/* check leading positions */
 	for (n = 0; n < (int)max_pos; ++n, ++p) {
-		switch (*p) {
+		const unsigned char cp = char_from_data (*p);
+		switch (cp) {
 		case '0':
 		case '1':
 		case '2':
@@ -3466,7 +3499,7 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 			continue;
 		case ',':
 		case '.':
-			if (*p != dec_pt) {
+			if (cp != dec_pt) {
 				return n + 1;
 			}
 			break_needed = 1;
@@ -3496,7 +3529,8 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 	space_seen = 0;
 
 	for (; n < (int)max_pos; ++n, ++p) {
-		switch (*p) {
+		const unsigned char cp = char_from_data (*p);
+		switch (cp) {
 		case '0':
 		case '1':
 		case '2':
@@ -3516,22 +3550,22 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 			if (decimal_seen || space_seen) {
 				return n + 1;
 			}
-			if (*p == dec_pt) {
+			if (cp == dec_pt) {
 				decimal_seen = 1;
 			} else if (!chkcurr) {
 				return n + 1;
 			}
 			if (digits) {
 				/* digit seen: must be at previous position */
-				const char prev = *(p - 1);
-				if (prev < '0' || prev > '9') {
+				const unsigned char prev = *(p - 1);
+				if (prev < COB_MODULE_PTR->rt_zero || prev > COB_MODULE_PTR->rt_nine) {
 					return n + 1;
 				}
 				
 			} else if (n < (int)max_pos - 1) {
 				/* no digit seen so far: must be at next position */
-				const char next = *(p + 1);
-				if (next < '0' || next > '9') {
+				const unsigned char next = *(p + 1);
+				if (next < COB_MODULE_PTR->rt_zero || next > COB_MODULE_PTR->rt_nine) {
 					return n + 2;
 				}
 			}
@@ -3557,8 +3591,9 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 				return n + 1;
 			}
 			if (n < (int)max_pos - 1) {
-				if (*(p + 1) == 'R' ||
-				    (anycase && *(p + 1) == 'r')) {
+				const unsigned char cn = char_from_data (*(p + 1));
+				if (cn == 'R' ||
+				    (anycase && cn == 'r')) {
 					p++; n++;	/* trailing +/-, only space afterwards allowed */
 					p++; n++;	/* skip cR */
 					break_needed = 1;
@@ -3576,8 +3611,9 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 				return n + 1;
 			}
 			if (n < (int)max_pos - 1) {
-				if (*(p + 1) == 'B' ||
-				    (anycase && *(p + 1) == 'b')) {
+				const unsigned char cn = char_from_data (*(p + 1));
+				if (cn == 'B' ||
+				    (anycase && cn == 'b')) {
 					p++; n++;	/* trailing +/-, only space afterwards allowed */
 					p++; n++;	/* skip dB */
 					break_needed = 1;
@@ -3600,7 +3636,7 @@ cob_check_numval (const cob_field *srcfield, const cob_field *currency,
 
 	/* check for trailing spaces only */
 	for (; n < (int)max_pos; ++n, ++p) {
-		if (*p != ' ') {
+		if (*p != COB_MODULE_PTR->rt_space) {
 			return n + 1;
 		}
 	}
@@ -5094,7 +5130,8 @@ cob_intr_numval_f (cob_field *srcfield)
 	exception = 0;
 
 	for ( /* start value for p set above */; p <= p_end; ++p) {
-		switch (*p) {
+		const unsigned char cp = char_from_data (*p);
+		switch (cp) {
 		case '0':
 			if (digits == 0 && !decimal_seen && exponent == 0) {
 				/* no data yet, so just skip */
@@ -5117,7 +5154,7 @@ cob_intr_numval_f (cob_field *srcfield)
 				if (decimal_seen) {
 					decimal_digits++;
 				}
-				final_buff[digits++] = *p;
+				final_buff[digits++] = cp;
 				if (digits > COB_MAX_DIGITS) {
 					exception = 1;
 					goto game_over;
@@ -5171,7 +5208,7 @@ cob_intr_numval_f (cob_field *srcfield)
 			   because of performance reasons */
 			continue;
 		default:
-			if (*p == dec_pt) {
+			if (cp == dec_pt) {
 				if (decimal_seen) {
 					exception = 1;
 				} else {
@@ -6369,7 +6406,7 @@ cob_intr_currency_symbol (void)
 #else
 	field.size = 1;
 	make_field_entry (&field);
-	curr_field->data[0] = COB_MODULE_PTR->currency_symbol;
+	curr_field->data[0] = data_from_char (COB_MODULE_PTR->currency_symbol);
 #endif
 	return curr_field;
 }
