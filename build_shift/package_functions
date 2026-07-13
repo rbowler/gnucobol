@@ -1,0 +1,98 @@
+# Helper functions for creating Debian packages
+
+STG_DIR="${TMPDIR:-/tmp}/debian-pkg/$PKG_NAME"
+SRC_DIR="/usr/local"
+DST_DIR="$STG_DIR/usr/local"
+
+RED="\033[1;91m"
+GREEN="\033[32m"
+ORANGE="\033[33m"
+RESET="\033[0m"
+
+function create_directory_structure {
+    # Remove old staging directory
+    if [ -d "$STG_DIR" ]; then
+        echo "Removing old directory structure..."
+        rm -v -r $STG_DIR
+    fi
+
+    # Create staging directory structure
+    echo "Creating new directory structure..."
+    mkdir -pv "$STG_DIR/DEBIAN"
+    for dir in "$@"; do
+        mkdir -pv "$DST_DIR/$dir"
+    done
+
+    # Determine the target architecture
+    HOST=$(uname -m)
+    case $HOST in
+    x86_64) ARCH=amd64 ;;
+    aarch64) ARCH=arm64 ;;
+    *) echo -e "${RED}Error: Unknown host architecture: ${HOST}${RESET}" ; exit 1 ;;
+    esac
+
+    # Copy control files
+    echo "Copying control files..."
+    if [ -f "control_$PKG_NAME" ]; then
+        sed -E "/Architecture:/s/: .*/: $ARCH/" "control_$PKG_NAME" > "$STG_DIR/DEBIAN/control"
+        echo -e "${GREEN}Copied control_$PKG_NAME and set architecture to ${ARCH}${RESET}"
+    else
+        echo -e "${RED}Error: control_$PKG_NAME not found in $(pwd){RESET}"
+        exit 1
+    fi
+}
+
+function copy_files {
+    local SUBDIR=$1
+    shift
+    for file in "$@"; do
+        if [ -f "$SRC_DIR/$SUBDIR/$file" ]; then
+            cp "$SRC_DIR/$SUBDIR/$file" "$DST_DIR/$SUBDIR/$file"
+            echo -e "${GREEN}Copied ${SUBDIR}/${file}${RESET}"
+        else
+            echo -e "${ORANGE}Warning: File ${file} not found in ${SRC_DIR}/${SUBDIR}/${RESET}"
+        fi
+    done
+}
+
+function copy_directories {
+    local SUBDIR=$1
+    shift
+    for dir in "$@"; do
+        if [ -d "$SRC_DIR/$SUBDIR/$dir" ]; then
+            cp -rv "$SRC_DIR/$SUBDIR/$dir" "$DST_DIR/$SUBDIR/"
+            echo -e "${GREEN}Copied ${SUBDIR}/${dir}${RESET}"
+        else
+            echo -e "${ORANGE}Warning: Directory ${SUBDIR}/${dir} not found in ${SRC_DIR}/${SUBDIR}/${RESET}"
+        fi
+    done
+}
+
+function create_symlink {
+    local SUBDIR=$1
+    local SYMLINK=$2
+    local TARGET=$3
+    (cd "$DST_DIR/$SUBDIR" && ln -sf "$TARGET" "$SYMLINK")
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Created symlink ${SYMLINK} -> ${TARGET} in ${SUBDIR}${RESET}"
+    else
+        echo -e "${RED}Error: Failed to create symlink ${SYMLINK} -> ${TARGET} in ${SUBDIR}${RESET}"
+        exit 1
+    fi
+}
+
+function build_package {
+    local DEB_DIR=${1:-.}
+    echo " "
+    echo "Building ${PKG_NAME} .deb package for ${ARCH}..."
+    echo "Staging directory: ${STG_DIR}"
+    echo "Package directory: $(realpath $DEB_DIR)"
+    mkdir -pv "${DEB_DIR}"
+    dpkg-deb --root-owner-group -b "${STG_DIR}" "${DEB_DIR}"
+    if [ $? -eq 0 ]; then
+        echo -e "${GREEN}Built ${PKG_NAME} .deb package for ${ARCH}${RESET}"
+    else
+        echo -e "${RED}Error: Failed to build ${PKG_NAME} .deb package for ${ARCH}${RESET}"
+        exit 1
+    fi
+}

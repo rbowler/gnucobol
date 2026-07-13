@@ -1,0 +1,23 @@
+Package: libcob4t64-shift
+Source: gnucobol-shift
+Version: 3.3-5
+Architecture: amd64
+Maintainer: Roger Bowler <rbowler@veliashift.com>
+Installed-Size: 564
+Depends: libc6 (>= 2.38), libdb5.3t64, libgmp10 (>= 2:6.3.0+dfsg), libjson-c5 (>= 0.15), libncursesw6 (>= 6), libtinfo6 (>= 6), libxml2 (>= 2.7.4)
+Breaks: libcob4t64
+Replaces: libcob4t64
+Section: libs
+Priority: optional
+Multi-Arch: same
+Homepage: https://www.gnu.org/software/gnucobol/
+Description: COBOL compiler with EBCDIC data option - runtime library
+ This package contains the runtime library for gnucobol-shift.
+ .
+ GnuCOBOL (formerly OpenCOBOL) is a free, modern COBOL compiler. GnuCOBOL
+ implements a substantial part of the COBOL 85, COBOL 2002 and COBOL 2014
+ standards and X/Open COBOL, as well as many extensions included in other COBOL
+ compilers (IBM COBOL, MicroFocus COBOL, ACUCOBOL-GT and others).
+ .
+ The shift version of GnuCOBOL enables programs which process EBCDIC data
+ to be compiled and run on an ASCII-based Linux system.

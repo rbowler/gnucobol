@@ -1,0 +1,23 @@
+Package: gnucobol-shift
+Version: 3.3-5
+Architecture: amd64
+Maintainer: Roger Bowler <rbowler@veliashift.com>
+Installed-Size: 3353
+Depends: libc6 (>= 2.38), libcob4t64-shift (>= 3.3-5), libcob4-shift-dev (= 3.3-5), libgmp-dev, libncurses5-dev, libxml2-dev (>= 2.7.4), libjson-c-dev (>= 0.15), gcc
+Breaks: gnucobol3, gnucobol4, open-cobol (<< 2.2)
+Replaces: gnucobol3, gnucobol4, open-cobol (<< 2.2)
+Section: devel
+Priority: optional
+Homepage: https://www.gnu.org/software/gnucobol/
+Description: GnuCOBOL compiler with EBCDIC data option
+ GnuCOBOL (formerly OpenCOBOL) is a free, modern COBOL compiler. GnuCOBOL
+ implements a substantial part of the COBOL 85, COBOL 2002 and COBOL 2014
+ standards and X/Open COBOL, as well as many extensions included in other COBOL
+ compilers (IBM COBOL, MicroFocus COBOL, ACUCOBOL-GT and others).
+ .
+ GnuCOBOL translates COBOL into C and compiles the translated code using a
+ native C compiler.
+ .
+ gnucobol-shift is a custom version of the GnuCOBOL compiler with an additional
+ configuration option -febcdic-data which allows COBOL applications that process
+ EBCDIC data to be compiled and run on an ASCII-based Linux system.
