@@ -11479,11 +11479,16 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_quote = 0x%2.2X;", cb_rt_quote);
 		output_line ("module__->rt_apost = 0x%2.2X;", cb_rt_apost);
 		output_line ("module__->rt_zero = 0x%2.2X;", cb_rt_zero);
+		output_line ("module__->rt_one = 0x%2.2X;", cb_rt_one);
 		output_line ("module__->rt_nine = 0x%2.2X;", cb_rt_nine);
 		output_line ("module__->rt_CR[0] = 0x%2.2X;", cb_rt_CR[0]);
 		output_line ("module__->rt_CR[1] = 0x%2.2X;", cb_rt_CR[1]);
 		output_line ("module__->rt_DB[0] = 0x%2.2X;", cb_rt_DB[0]);
 		output_line ("module__->rt_DB[1] = 0x%2.2X;", cb_rt_DB[1]);
+		output_line ("module__->rt_A = 0x%2.2X;", cb_rt_A);
+		output_line ("module__->rt_F = 0x%2.2X;", cb_rt_F);
+		output_line ("module__->rt_a = 0x%2.2X;", cb_rt_a);
+		output_line ("module__->rt_f = 0x%2.2X;", cb_rt_f);
 		output_line ("COB_ZEROES_ALPHABETIC = COB_ZEROES_EBCDIC;");
 		output_line ("COB_SPACES_ALPHABETIC = COB_SPACES_EBCDIC;");
 	} else {
@@ -11501,11 +11506,16 @@ output_module_init_function (struct cb_program *prog)
 		output_line ("module__->rt_quote = '%c';", cb_rt_quote);
 		output_line ("module__->rt_apost = '\\%c';", cb_rt_apost);
 		output_line ("module__->rt_zero = '%c';", cb_rt_zero);
+		output_line ("module__->rt_one = '%c';", cb_rt_one);
 		output_line ("module__->rt_nine = '%c';", cb_rt_nine);
 		output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
 		output_line ("module__->rt_CR[1] = '%c';", cb_rt_CR[1]);
 		output_line ("module__->rt_DB[0] = '%c';", cb_rt_DB[0]);
 		output_line ("module__->rt_DB[1] = '%c';", cb_rt_DB[1]);
+		output_line ("module__->rt_A = '%c';", cb_rt_A);
+		output_line ("module__->rt_F = '%c';", cb_rt_F);
+		output_line ("module__->rt_a = '%c';", cb_rt_a);
+		output_line ("module__->rt_f = '%c';", cb_rt_f);
 	}
 #else
 	output_line ("module__->flag_ebcdic_data = 0;");
@@ -11522,11 +11532,16 @@ output_module_init_function (struct cb_program *prog)
 	output_line ("module__->rt_quote = '%c';", cb_rt_quote);
 	output_line ("module__->rt_apost = '\\%c';", cb_rt_apost);
 	output_line ("module__->rt_zero = '%c';", cb_rt_zero);
+	output_line ("module__->rt_one = '%c';", cb_rt_one);
 	output_line ("module__->rt_nine = '%c';", cb_rt_nine);
 	output_line ("module__->rt_CR[0] = '%c';", cb_rt_CR[0]);
 	output_line ("module__->rt_CR[1] = '%c';", cb_rt_CR[1]);
 	output_line ("module__->rt_DB[0] = '%c';", cb_rt_DB[0]);
 	output_line ("module__->rt_DB[1] = '%c';", cb_rt_DB[1]);
+	output_line ("module__->rt_A = '%c';", cb_rt_A);
+	output_line ("module__->rt_F = '%c';", cb_rt_F);
+	output_line ("module__->rt_a = '%c';", cb_rt_a);
+	output_line ("module__->rt_f = '%c';", cb_rt_f);
 #endif
 
 	output_block_close ();

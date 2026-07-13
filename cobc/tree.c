@@ -1922,7 +1922,7 @@ cb_get_long_long (const cb_tree x)
 
 	/* Skip leading zeroes */
 	for (i = 0; i < l->size; i++) {
-		if (l->data[i] != '0') {
+		if (l->data[i] != cb_rt_zero) {
 			break;
 		}
 	}
@@ -1976,7 +1976,7 @@ cb_get_u_long_long (const cb_tree x)
 
 	/* Skip leading zeroes */
 	for (i = 0; i < l->size; i++) {
-		if (l->data[i] != '0') {
+		if (l->data[i] != cb_rt_zero) {
 			break;
 		}
 	}
@@ -5478,6 +5478,14 @@ display_literal (char *disp, struct cb_literal *l, int offset, int scale)
 	} else {
 		snprintf (disp, COB_MAX_DIGITS + 1, "%s", (char *)(l->data + offset));
 	}
+#ifndef COB_EBCDIC_MACHINE
+	if (cb_ebcdic_data) {
+		cob_u32_t i;
+		for (i = 0; i < COB_MAX_DIGITS && disp[i]; i++) {
+			disp[i] = ebcdic_to_ascii[(unsigned char)disp[i]];
+		}
+	}
+#endif
 	return disp;
 }
 
@@ -5556,18 +5564,18 @@ compare_field_literal (cb_tree e, int swap, cb_tree x,
 
 	/* initial: set length and type of comparision literal */
 	for (lit_length = l->size;
-		  lit_length > 0 && l->data[lit_length - 1] == ' ';
+		  lit_length > 0 && l->data[lit_length - 1] == cb_rt_space;
 		  lit_length--);
 
 	alph_lit = 0;
 	zero_val = 1;
 	for (j = 0; l->data[j] != 0; j++) {
-		if (!isdigit(l->data[j])) {
+		if (l->data[j] < cb_rt_zero || l->data[j] > cb_rt_nine) {
 			alph_lit = 1;
 			/* note: zero_val not checked in this case */
 			break;
 		}
-		if (l->data[j] != '0') {
+		if (l->data[j] != cb_rt_zero) {
 			zero_val = 0;
 		}
 	}
@@ -5642,14 +5650,14 @@ compare_field_literal (cb_tree e, int swap, cb_tree x,
 	} else {
 
 		/* Adjust length for leading ZERO in literal */
-		for (lit_start=0; l->data[lit_start] == '0'; lit_start++);
+		for (lit_start=0; l->data[lit_start] == cb_rt_zero; lit_start++);
 		lit_length -= lit_start;
 
 		/* Adjust scale for trailing ZEROS in literal */
 		scale = l->scale;
 		i = lit_length;
 		for (j = l->size;
-			  scale > 0 && j > 0 && l->data[j-1] == '0';
+			  scale > 0 && j > 0 && l->data[j-1] == cb_rt_zero;
 			  j--,i--)
 			scale--;
 	}
@@ -5824,7 +5832,7 @@ compare_field_literal (cb_tree e, int swap, cb_tree x,
 		if (i == f->size) {
 #endif
 
-			for (j=0; l->data[lit_start + j] == '9'; j++);
+			for (j=0; l->data[lit_start + j] == cb_rt_nine; j++);
 			if (j != f->size) {
 				/* all fine */
 			} else if (l->sign < 0) {

@@ -582,28 +582,40 @@ ppparse_clear_vars (const struct cb_define_struct *p)
 						  "SIGN",
 						  "'ASCII'", 0);
 	}
+	if (cb_binary_byteorder == CB_BYTEORDER_BIG_ENDIAN) {
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"ENDIAN",
+						"'BIG'", 0);
+	} else {
 #ifdef	WORDS_BIGENDIAN
-	ppp_setvar_list = ppp_define_add (ppp_setvar_list,
-					  "ENDIAN",
-					  "'BIG'", 0);
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"ENDIAN",
+						"'BIG'", 0);
 #else
-	ppp_setvar_list = ppp_define_add (ppp_setvar_list,
-					  "ENDIAN",
-					  "'LITTLE'", 0);
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"ENDIAN",
+						"'LITTLE'", 0);
 #endif
+	}
+	if (cb_ebcdic_data) {
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"CHARSET",
+						"'EBCDIC'", 0);
+	} else {
 #if	' ' == 0x20
-	ppp_setvar_list = ppp_define_add (ppp_setvar_list,
-					  "CHARSET",
-					  "'ASCII'", 0);
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"CHARSET",
+						"'ASCII'", 0);
 #elif	' ' == 0x40
-	ppp_setvar_list = ppp_define_add (ppp_setvar_list,
-					  "CHARSET",
-					  "'EBCDIC'", 0);
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"CHARSET",
+						"'EBCDIC'", 0);
 #else
-	ppp_setvar_list = ppp_define_add (ppp_setvar_list,
-					  "CHARSET",
-					  "'UNKNOWN'", 0);
+		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
+						"CHARSET",
+						"'UNKNOWN'", 0);
 #endif
+	}
 	/* Set DEFINE's from '-D' option(s) */
 	for (q = p; q; q = q->next) {
 		ppp_setvar_list = ppp_define_add (ppp_setvar_list,
