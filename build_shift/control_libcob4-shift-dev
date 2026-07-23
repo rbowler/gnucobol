@@ -1,10 +1,10 @@
 Package: libcob4-shift-dev
 Source: gnucobol-shift
-Version: 3.3-5
+Version: 3.3-6
 Architecture: amd64
 Maintainer: Roger Bowler <rbowler@veliashift.com>
 Installed-Size: 1105
-Depends: libcob4t64-shift (= 3.3-5)
+Depends: libcob4t64-shift (= 3.3-6)
 Breaks: libcob1-dev, libcob4-dev, libcob4t64-dev
 Replaces: libcob1-dev, libcob4-dev, libcob4t64-dev
 Section: libdevel
