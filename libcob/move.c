@@ -1067,8 +1067,9 @@ optimized_move_display_to_edited (cob_field *f1, cob_field *f2)
 	}
 
 	switch (c) {
-		case '-' : float_char = COB_MODULE_PTR->rt_minus; break;
-		case '+' : float_char = COB_MODULE_PTR->rt_plus; break;
+		/* float_char is compared only to ASCII PIC symbols, never stored */
+		case '-' : float_char = c; break;
+		case '+' : float_char = c; break;
 		case '*' : pad = COB_MODULE_PTR->rt_aster; break;
 		default:
 			if (c == currency) {
