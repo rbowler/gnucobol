@@ -1199,6 +1199,7 @@ cob_call_field (const cob_field *f, const struct cob_call_struct *cs,
 {
 	char		*name, *entry, *dirent;
 	void		*p;
+	size_t		i;
 
 	/* LCOV_EXCL_START */
 	if (unlikely(!cobglobptr)) {
@@ -1208,6 +1209,12 @@ cob_call_field (const cob_field *f, const struct cob_call_struct *cs,
 
 	name = cob_get_buff (f->size + 1);
 	cob_field_to_string (f, name, f->size, CCM_NONE);
+
+	if (COB_MODULE_PTR && COB_MODULE_PTR->flag_ebcdic_data) {
+		for (i = 0; i < f->size; i++) {
+			name[i] = COB_MODULE_PTR->ebcdic_to_ascii_table[(unsigned char)name[i]];
+		}
+	}
 
 	/* check for uncommon leading space - trim it */
 	if (*name == ' ') {
