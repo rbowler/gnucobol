@@ -7,6 +7,7 @@ if [ "${CURDIR##*/}" != "gnucobol" ]; then
 fi
 COBVER=$(awk '/Version:/{print$2}' build_shift/control_gnucobol-shift)
 ./autogen.sh
+rm -r build
 mkdir -p build
 cd build
 CFLAGS="-g -rdynamic" ../configure \
